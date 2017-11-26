@@ -14,19 +14,19 @@ export JAVA_HOME GRADLE_HOME MAVEN_HOME PATH
 <mirror>
       <!--This sends everything else to /public -->
       <id>nexus</id>
-      <mirrorOf>*</mirrorOf> 
+      <mirrorOf>*</mirrorOf>
       <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
     </mirror>
     <mirror>
-      <!--This is used to direct the public snapshots repo in the 
+      <!--This is used to direct the public snapshots repo in the
           profile below over to a different nexus group -->
       <id>nexus-public-snapshots</id>
-      <mirrorOf>public-snapshots</mirrorOf> 
+      <mirrorOf>public-snapshots</mirrorOf>
       <url>http://maven.aliyun.com/nexus/content/repositories/snapshots/</url>
     </mirror>
 ```
 
-### POM 
+### POM
 
 #### <parent>
 在子项目中，能够继承父项目的如下配置：
@@ -38,7 +38,7 @@ export JAVA_HOME GRADLE_HOME MAVEN_HOME PATH
 - reports lists
 - plugin executions with matching ids
 - plugin configuration
-    
+
 ```    
       <parent>  
          <groupId>com.mycompany.jcat</groupId>  
@@ -48,7 +48,7 @@ export JAVA_HOME GRADLE_HOME MAVEN_HOME PATH
        </parent>  
 ```
 
-类似于Java中的java.lang.Object类，所有Java类都继承自该类。在Maven中也存在一个特殊的POM，被称为Super POM。任何Maven项目的POM都继承自Super POM。
+类似于Java中的java.lang.Object类，所有Java类都继承自该类。在Maven中也存在一个特殊的POM，被称为Super POM。任何Maven项目的POM都继承自Super POM
 
 在Super POM中，设置如下：
 
