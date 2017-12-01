@@ -33,6 +33,56 @@ export JAVA_HOME GRADLE_HOME MAVEN_HOME PATH
       <url>http://maven.aliyun.com/nexus/content/repositories/snapshots/</url>
     </mirror>
 ```
+### MongoDB
+
+Download: https://www.mongodb.com/download-center#community
+
+
+apache-maven-3.3.9-bin
+192.168.1.100
+
+download: http://dl.mongodb.org/dl/win32/x86_64
+
+mongod --logpath F:\MongoDB\data\log\mongodb.log --dbpath F:\MongoDB\data\db\
+r
+Mint: /usr/bin/mongod --config /etc/mongodb.conf
+
+------------------------------
+  Instructions
+------------------------------
+
+1. Run mongodb-win32-x86_64-2008plus-3.4.10-signed.exe
+
+2. Choose "Complete" setup.
+
+3. Create a new folder after installation is done.
+
+   "C:\data\db\"
+
+4. Append the following path to system environment variable.
+
+   "C:\Program Files\MongoDB\Server\3.4\bin"
+
+#### Practice
+1. mongod to start server
+2. mongo to start client
+3.
+
+    -- Find
+   db.Employee.find().pretty()
+   db.Employee.find({"by":"test2", "name":"test2"}).pretty()
+   db.Employee.find({"name":"test2"}).pretty()
+   -- Insert
+   db.Employee.insert({"name":"test1"})
+   --UPDATE Option 1
+   db.Employee.update({'name':'test1'},{$set:{'title':'MongoDB'}})
+   --UPDATE Option 2
+   db.Employee.save({"_id" : ObjectId("5a0fa4960a10961f1e5c5a4b"),"name" : "test2","title" :"MongoDB2"})
+   db.Employee.remove({'name':'test1'})
+
+   db.dropDatabase()
+
+
 
 ### POM
 
@@ -56,7 +106,7 @@ export JAVA_HOME GRADLE_HOME MAVEN_HOME PATH
        </parent>  
 ```
 
-类似于Java中的java.lang.Object类，所有Java类都继承自该类。在Maven中也存在一个特殊的POM，被称为Super POM。任何Maven项目的POM都继承自Super POM
+类似于Java中的java.lang.Object类，所有Java类都继承自该类。在Maven中也存在一个特殊的POM，被称为Super POM。任何Maven项目的POM都继承自Super POM 
 
 在Super POM中，设置如下：
 
