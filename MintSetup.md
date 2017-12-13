@@ -16,6 +16,21 @@ MAVEN_HOME=/home/oliversegal/Work/apache-maven-3.5.2
 PATH=${PATH}:${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${MAVEN_HOME}/bin
 export JAVA_HOME GRADLE_HOME MAVEN_HOME PATH
 ```
+### 安装nodejs
+
+下载Nodejs https://nodejs.org
+
+```
+cd /home/oliversegal/Work/node-v8.9.0-linux-x64
+
+sudo cp -r bin/* /usr/local/bin/
+sudo cp -r lib/* /usr/local/lib/
+sudo cp -r include/* /usr/local/include/
+
+sudo ln -s /usr/local/bin/node /usr/bin/node
+sudo ln -s /usr/local/bin/npm /usr/bin/npm
+
+```
 
 ### Add Ali Miror
 ```
