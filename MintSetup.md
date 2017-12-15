@@ -50,21 +50,17 @@ sudo ln -s /usr/local/bin/npm /usr/bin/npm
 ```
 ### MongoDB
 
+#### Mint
 Download: https://www.mongodb.com/download-center#community
-
 
 apache-maven-3.3.9-bin
 192.168.1.100
 
-download: http://dl.mongodb.org/dl/win32/x86_64
-
-mongod --logpath F:\MongoDB\data\log\mongodb.log --dbpath F:\MongoDB\data\db\
-r
 Mint: /usr/bin/mongod --config /etc/mongodb.conf
 
-------------------------------
-  Instructions
-------------------------------
+#### windows
+
+download: http://dl.mongodb.org/dl/win32/x86_64
 
 1. Run mongodb-win32-x86_64-2008plus-3.4.10-signed.exe
 
@@ -77,6 +73,8 @@ Mint: /usr/bin/mongod --config /etc/mongodb.conf
 4. Append the following path to system environment variable.
 
    "C:\Program Files\MongoDB\Server\3.4\bin"
+
+mongod --logpath F:\Develop\MongoDB\data\log\mongodb.log --dbpath F:\Develop\MongoDB\data\db\
 
 #### Practice
 1. mongod to start server

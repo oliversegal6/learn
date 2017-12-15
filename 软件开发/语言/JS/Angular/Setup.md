@@ -9,6 +9,7 @@ npm cache clean
 npm install -g @angular/cli@latest
 
 npm install --save-dev @angular/cli@latest
+npm install typescript@2.6.2
 ```
 
 #### 步骤2. 创建新项目
