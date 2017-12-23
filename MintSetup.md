@@ -96,6 +96,39 @@ mongod --logpath F:\Develop\MongoDB\data\log\mongodb.log --dbpath F:\Develop\Mon
    db.dropDatabase()
 
 
+### Kafka
+[Quick Start](https://kafka.apache.org/quickstart "Quick Start")
+
+#### Windows
+cd F:\Develop\kafka_2.11-1.0.0\
+##### 1. Start the server
+**start zookeeper**
+bin\windows\zookeeper-server-start.bat config\zookeeper.properties
+**start kafka**
+bin\windows\kafka-server-start.bat config\server.properties
+
+##### 2. Create a topic
+Let's create a topic named "test" with a single partition and only one replica:
+`bin\windows\kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test`
+
+We can now see that topic if we run the list topic command:
+` bin\windows\kafka-topics.bat --list --zookeeper localhost:2181`
+
+##### 3. Send some messages
+
+Kafka comes with a command line client that will take input from a file or from standard input and send it out as messages to the Kafka cluster. By default, each line will be sent as a separate message.
+
+Run the producer and then type a few messages into the console to send to the server.
+
+`bin\windows\kafka-console-producer.bat --broker-list localhost:9092 --topic test`
+
+##### 4. Start a consumer
+
+Kafka also has a command line consumer that will dump out messages to standard output.
+
+`bin\windows\kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test --from-beginning`
+
+
 
 ### POM
 

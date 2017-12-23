@@ -15,7 +15,7 @@
 
 #### 序列化
 系统之间通过网络传输，或者存储到文件时，肯定只有一种格式，就是字符串。要将复杂的数据结构与字符串之间进行转换，就需要用到序列化。
-- JSON和XML，  JSON和XML只能用于传递数据
+- JSON和XML，JSON和XML只能用于传递数据
 - protobuf、thrift， protobuf与thrift还可以用来做RPC协议
 
 #### 线程、锁基础知识
