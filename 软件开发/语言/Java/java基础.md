@@ -138,3 +138,43 @@ jar {ctxu}[vfm0M] [jar-文件] [manifest-文件] [-C 目录] 文件名 ...
 
 3) 使用 jar 命令创建 ZIP 文件 
 有些 Linux 下提供了 unzip 命令，但没有 zip 命令，所以需要可以对 ZIP 文件进行解压，即不能创建 ZIP 文件。如要创建一个 ZIP 文件，使用带 -M 参数的 jar 命令即可，因为 -M 参数表示制作 JAR 包的时候不添加 MANIFEST 清单，那么只需要在指定目标 JAR 文件的地方将 .jar 扩展名改为 .zip 扩展名，创建的就是一个不折不扣的 ZIP 文件了，如将上一节的第 3) 个例子略作改动：
+
+## Annotation
+
+1. 基础	
+Jdk5 已经定义好了三种类型的Annotation，分别是Override, Deprecated, SupressWarnings。
+- Override 是用来指示有一个method，它override掉它自己的superclass的method .
+- Deprecated指出某一个method或是element类型的使用是被阻止的。
+- SupressWarnings会关掉class, method, field 与 variable初始化的编译器警告。
+
+2. 自定义
+可以用 @interface来自定义Annotation，定义时有四个meta-annotation用来修饰自定义的Annotation分别是Target, Retention,Documented,Inherited
+
+
+3. 应用
+Annotation可以在运行时通过反射使用，Class, Field,Method,Constructor 等JDK API都实现了AnnotatedElement用来能过反射得到Annotation使得可以在运行时动态的得到它。
+
+现在很多基于Annotation的Annotation库应该都是使用反射来用的，像EJB3.0，Hibernate中的Annotation应该都是自己写的一套Annotation库来使用。
+使用Annotation减少了XML配置文件，使java开发也更倾向于动态语言如Ruby之类的特性了（因为Ruby更相信约定也就是Annotation更强于XML配置文件）
+
+
+## 异常处理
+
+### 基本原理：
+对于异常最重要的是对其观念的了解，以及面对异常你所应该采取的行动。
+
+异常处理其实就是用new产生一个用以表示错误状态的对象。
+
+### 语法方面：
+当在函数中用throw来抛出一个异常时，你可以在本函数中进行捕捉（try,catch）也可以抛出到上层调用模块用try,catch来处理，在本函数中不做处理时你必须在函数声明处标识抛出的异常类型（java语法要求，RunTimeException类型异常除外）。
+
+通常用法，如果你不做处理抛出，程序会在抛出点中断。如果你想要函数内程序继续执行，就用try,catch块来捕捉异常情况。那么try,catch块以后的代码用继续执行。
+
+### 通用作法：
+1. 运行时异常（unchecked Exception)，被调用函数抛出，调用函数也可以不做处理，语法上不会有错误。但按一般应有地方做catch或处理，如把错误写入log日志中
+2. checked　Exception一般为要进行处理的异常，也就是说可修复的异常。
+
+应用例子：像持久用Ibatis,业务层用spring，表示层用struts
+	这样的话用Spring包装Dao来操作数据库，Spring用DataAccessException把数据库产生的异常包装了起来
+DataAccessException是uncheckedException,可以不捕捉该异常因为一般这种异常都是不可修复的，一般来说要有一个地方把异常记录到日志中
+以方便找错，当然也可以把它包装到自己写的Exception中把指定的错误消息显示，等等。

@@ -1,5 +1,5 @@
 
-1. 	Java 中对于字符串的编码处理可以用　new String(str.getBytes(“utf-8”),”utf-8”);来做处理，getBytes(“utf-8”)是说把str按照utf-8来编码，并以字节方式表示。New String(charset)是用来把字节数组按照charset编码进行组合识别，最后转换为unicode存储。两者组合起来形成一个完全可逆的过程。
+1. Java 中对于字符串的编码处理可以用　new String(str.getBytes(“utf-8”),”utf-8”);来做处理，getBytes(“utf-8”)是说把str按照utf-8来编码，并以字节方式表示。New String(charset)是用来把字节数组按照charset编码进行组合识别，最后转换为unicode存储。两者组合起来形成一个完全可逆的过程。
 
 2. setCharacterEncoding() 
 该函数用来设置http请求或者相应的编码。 
