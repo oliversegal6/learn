@@ -7,7 +7,8 @@
     sudo apt-get install oracle-java8-installer  
     sudo apt-get install oracle-java8-set-default  
 ```
-
+vi  ~/.bashrc
+vi  /etc/profile
 ```
 JAVA_HOME=/home/oliversegal/Work/jdk1.8.0_151
 GRADLE_HOME=/home/oliversegal/Work/gradle-4.2.1
@@ -16,6 +17,10 @@ MAVEN_HOME=/home/oliversegal/Work/apache-maven-3.5.2
 PATH=${PATH}:${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${MAVEN_HOME}/bin
 export JAVA_HOME GRADLE_HOME MAVEN_HOME PATH
 ```
+
+source ~/.bashrc
+source /etc/profile
+
 ### 安装nodejs
 
 下载Nodejs https://nodejs.org
