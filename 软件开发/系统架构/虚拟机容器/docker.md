@@ -4,6 +4,10 @@
 
 http://www.docker.org.cn/book/install/install-docker-under-ubuntu-precise-20.html
 
+curl -fsSL https://get.docker.com/ | sh
+
+curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/intranet | sh
+
 ### 内核要求：
 
 由于LXC的一个bug，Docker在3.8内核下面运行最佳。Ubuntu的Precise版本内置的是3.2版本的内核，因此我们首先需要升级内核。安装下面的步骤可以升级到3.8内核，并内置AUFS的支持。同时还包括了通用头文件，这样我们就可以激活依赖于这些头文件的包，比如ZFS，VirtualBox的增强功能包。
@@ -104,6 +108,8 @@ docker cp more.log e7de404c00bd:/tmp/
 
 
 ### 提交Docker镜像
+
+docker pull python
 
 1. 启动python镜像容器
 docker run -t -i python:3.5 /bin/bash
@@ -265,6 +271,7 @@ docker pull python:3.5
 使用python镜像运行容器
 docker run  -v $PWD/myapp:/usr/src/myapp  -w /usr/src/myapp python:3.5 python helloworld.py
 
+docker run  -v $PWD:/usr/src/myapp  -w /usr/src/myapp oliver/python:3.5a python test.py
 命令说明：
 -v $PWD/myapp:/usr/src/myapp :将主机中当前目录下的myapp挂载到容器的/usr/src/myapp
 -w /usr/src/myapp :指定容器的/usr/src/myapp目录为工作目录
@@ -289,6 +296,8 @@ docker run -p 27017:27017 -v $PWD/db:/data/db -d mongo:3.6
 
 docker ps 
 
+docker stop
+docker kill 
 3. 使用mongo镜像执行mongo 命令连接到刚启动的容器,主机IP为172.17.0.1
 
 docker run -it mongo:3.6 mongo --host 172.17.0.1

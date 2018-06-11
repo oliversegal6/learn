@@ -11,7 +11,7 @@ sources.list系统自带的，源是来Ubuntu的官网！安装包比较慢，�
 ```
 linuxidc.com@ubuntu:~$ cd /etc/apt
 linuxidc.com@ubuntu:/etc/apt$ sudo cp sources.list sources.list.bak
-linuxidc.com@ubuntu:/etc/apt$ vim sources.list                                                 
+linuxidc.com@ubuntu:/etc/apt$ vi sources.list                                                 
 
 # 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
 清华大学
@@ -69,3 +69,29 @@ sudo apt-get source package  下载该包的源代码
 sudo apt-get clean && sudo apt-get autoclean 清理无用的包
 sudo apt-get check 检查是否有损坏的依赖
 ```
+
+### Python 安装
+
+Ubuntu17.04自带Python2.7与Python3.5.3的版本，由于Python2与Python3有着一些差距可能需要安装更新Python3的版本，并且切换默认的Python解释器。
+
+1. Download
+wget https://www.python.org/ftp/python/3.6.5/Python-3.6.5.tar.xz
+
+2. unzip
+
+tar -xvf Python-3.6.5.tar.xz
+
+3. Install
+
+cd Python-3.6.5
+./configure
+make
+make install
+
+4. create alias
+
+alias python=python3
+
+5. Install pip
+
+sudo apt-get install python-pip
