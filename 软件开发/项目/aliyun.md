@@ -1,0 +1,69 @@
+## 安装 Docker
+
+curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/intranet | sh
+
+### 内核要求：
+
+由于LXC的一个bug，Docker在3.8内核下面运行最佳。Ubuntu的Precise版本内置的是3.2版本的内核，因此我们首先需要升级内核。安装下面的步骤可以升级到3.8内核，并内置AUFS的支持。同时还包括了通用头文件，这样我们就可以激活依赖于这些头文件的包，比如ZFS，VirtualBox的增强功能包。
+
+```
+# install the backported kernel
+sudo apt-get update
+sudo apt-get install linux-image-generic-lts-raring linux-headers-generic-lts-raring
+
+# reboot
+sudo reboot
+```
+
+## Docker 安装 mongo
+
+docker search mongo
+docker pull mongo:3.6
+
+1. 使用mongo镜像
+
+运行容器
+docker run -p 27017:27017 -v /home/oliver/Work/Develop/mongodb/db:/data/db -d mongo:3.6
+docker run -d -p 27017:27017 -v /home/oliver/tools/mongodb/db:/data/db -d mongo:3.6
+
+命令说明：
+
+-p 27017:27017 :将容器的27017 端口映射到主机的27017 端口
+-v $PWD/db:/data/db :将主机中当前目录下的db挂载到容器的/data/db，作为mongo数据存储目录
+
+
+## docker下安装python
+
+docker search python
+docker pull python:3.6
+
+1. 启动python镜像容器
+
+第一次运行下载下来的python进行修改
+docker run -t -i python:3.6 /bin/bash
+
+首次后使用自己的image进行修改
+docker run -t -i oliver/python:3.6a /bin/bash
+
+2. 安装对应库
+```
+    pip install pandas 
+    pip install lxml 
+    pip install bs4
+    pip install matplotlib
+    pip install requests
+    pip install flask
+    pip install flask-restplus
+    pip install pymongo
+    pip install tushare 
+```
+
+3. 退出你刚才配置好的docker镜像
+exit    
+
+4. 使用以下命令可以看到刚才退出的docker镜像
+docker ps -a
+
+5. 用以下命令，根据某个”容器ID”来创建一个新的”镜像”：
+docker commit -m="Add pandas/lxml/bs4/matplotlib/tushare/threadpool/Django/flask" -a="oliver" 7d95d4cc8018 oliver/python:3.6a
+

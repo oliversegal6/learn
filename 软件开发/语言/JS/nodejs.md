@@ -13,6 +13,26 @@ sudo ln -s /usr/local/bin/node /usr/bin/node
 sudo ln -s /usr/local/bin/npm /usr/bin/npm
 
 ```
+ #### 方法2
+ sudo apt-get install nodejs
+ sudo apt-get install npm
+
+sudo apt-get remove nodejs
+sudo apt-get remove npm
+
+如果node不是最新的，node有一个模块叫n，是专门用来管理node.js的版本的。使用npm（NPM是随同nodejs一起安装的包管理工具）安装n模块
+
+
+    $ sudo npm install -g n  
+
+然后，升级node.js到最新稳定版
+
+
+    $ sudo n stable  
+
+旧版本的 npm，也可以很容易地通过 npm 命令来升级，命令如下：
+
+$ sudo npm install npm -g
 
 ### 加快下载速度
 #### (1)、关闭npm的https 

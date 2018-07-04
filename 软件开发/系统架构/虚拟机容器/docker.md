@@ -4,8 +4,6 @@
 
 http://www.docker.org.cn/book/install/install-docker-under-ubuntu-precise-20.html
 
-curl -fsSL https://get.docker.com/ | sh
-
 curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/intranet | sh
 
 ### 内核要求：

@@ -1,3 +1,37 @@
+## 安装 python
+
+### remove python
+
+1、卸载python3.6
+
+sudo apt-get remove python3.6
+
+2、卸载python3.6及其依赖
+
+sudo apt-get remove --auto-remove python3.6
+
+3、清除python3.6
+
+sudo apt-get purge python3.6
+or
+sudo apt-get purge --auto-remove python3.6
+
+### Install python
+
+sudo apt-get install python2.7 python2.7-dev
+
+sudo apt-get install python3.6 python3.6-dev
+
+### 安装build依赖包
+sudo apt-get install build-essential libssl-dev libevent-dev libjpeg-dev libxml2-dev libxslt-dev
+
+### 安装pip
+
+pip是Python的包管理工具，建议Python的所有包都用pip进行管理，命令如下：
+
+sudo apt-get install python-pip
+sudo apt-get install python3-pip
+
 ## docker下安装python
 
 1. 启动python镜像容器
@@ -14,6 +48,11 @@ docker run -t -i oliver/python:3.5a /bin/bash
     $ pip install pymongo
     $ pip install Django
     $ pip install flask 
+
+    pip install sklearn
+    pip install tensorflow
+    pip install keras
+    pip install corenlp
 ```
 
 3. 退出你刚才配置好的docker镜像
@@ -23,7 +62,7 @@ exit
 docker ps -a
 
 5. 用以下命令，根据某个”容器ID”来创建一个新的”镜像”：
-docker commit -m="Add pandas/lxml/bs4/matplotlib/tushare/pymongo/Django/flask" -a="oliver" ee71f0491df0 oliver/python:3.5a
+docker commit -m="Add pandas/lxml/bs4/matplotlib/tushare/pymongo/Django/flask" -a="oliver" be16caa12af3 oliver/python:3.5a
 
 该容器ID是”57c312bbaad1”，所创建的镜像名是”javaweb”
 注意：”57c312bbaad1” 这个ID是使用 docker ps 命令来查看的
@@ -31,29 +70,6 @@ docker commit -m="Add pandas/lxml/bs4/matplotlib/tushare/pymongo/Django/flask" -
 docker save -o  ~/python.tar  oliver/python
 docker  save -o  保存的目录  镜像名
 
-
-## Django
-
-### 创建 Django 项目：
-docker run -v /home/oliver/Work/Develop/python/:/usr/src/python  -w /usr/src/python oliver/python:3.5a django-admin.py startproject testdj
-
-### 启动服务
-
-cd testdj # 切换到我们创建的项目
-docker run -p 8000:8000 -v /home/oliver/Work/Develop/python/testdj:/usr/src/python/testdj -w /usr/src/python/testdj oliver/python:3.5a python manage.py runserver 0.0.0.0:8000
-
-### Create app
-docker run -v /home/oliver/Work/Develop/python/testdj:/usr/src/python/testdj  -w /usr/src/python/testdj oliver/python:3.5a python manage.py startapp stockmining
-
-### Migrate the default database
-
-This is for the admin default setup
-
-docker run -v /home/oliver/Work/Develop/python/testdj:/usr/src/python/testdj  -w /usr/src/python/testdj oliver/python:3.5a python manage.py migrate
-
-### create superuser
-
-python manage.py createsuperuser 
 
 ## Flask
 

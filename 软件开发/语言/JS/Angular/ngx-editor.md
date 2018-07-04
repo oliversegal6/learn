@@ -1,14 +1,17 @@
 [TOC]
 # NgxEditor.Md
 
- Angualr4 directive for markdown editor, wrapper by [edititor.md](https://github.com/pandao/editor.md) ，original project [demo](https://pandao.github.io/editor.md/)
+## 步骤1. 设置开发环境
+`npm install -g @angular/cli@6.0.0`
 
+重新卸载安装
 
+```
+npm uninstall -g @angular/cli
+npm cache clean --force
+npm install -g @angular/cli@6.0.0
+```
 
-# Installation
-
-npm install --save ngx-editor.md@2.3.3
-npm uninstall ngx-editor.md
 
 # Usage
 
@@ -28,12 +31,13 @@ npm uninstall ngx-editor.md
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 
+import {EditorMdDirective} from './editormd/director/editor-md.directive';
 import {AppComponent} from './app.component';
-import {EditorMdModule} from 'ngx-editor.md';
 
 @NgModule({
   declarations: [
     AppComponent,
+    EditorMdDirective
   ],
   imports: [
     BrowserModule,
@@ -70,6 +74,18 @@ export class AppComponent {
 
 ```
 
+**angular.json**
+            "styles": [
+              "node_modules/ng-zorro-antd/src/ng-zorro-antd.min.css",
+              "src/styles.css",
+              "src/assets/css/editormd.css"
+            ],
+            "scripts": [
+              "node_modules/jquery/dist/jquery.js",
+              "src/assets/editormd.min.js"
+            ]
+
+
 ## EditorConfig
 
 **default settings**
@@ -103,11 +119,10 @@ export class EditorConfig {
 }
 ```
 
-# Screenshot
+# ng-zorro-antd
 
-![screentshot](demo.png)
+## Install ng-zorro-antd
 
-# APIS
+https://ng.ant.design/docs/introduce/zh
 
-Please go to the original project , [click me](https://pandao.github.io/editor.md/examples/index.html)
-
+ng add ng-zorro-antd
