@@ -1,6 +1,5 @@
 #### 步骤1. 设置开发环境
 `npm install -g @angular/cli@6.0.0`
-
 重新卸载安装
 
 ```
@@ -27,9 +26,29 @@ npm install typescript@2.6.2
 
 ng generate component docTree
 
+#### Create new Service
+
+ng generate service hero
+
+#### 添加PWA支持
+
+ng add @angular/pwa
+
+@angular/cli内置的Server在–prod 编译的时候还不支持service-worker，所以上面装了一个第三方的http-server
+
+npm install http-server --global
+
+#### 添加ng-zorro
+
+`ng add ng-zorro-antd`
+
+
 ####  启动开发服务器
 进入项目目录，并启动服务器。
 ```
 cd my-app
 ng serve --open
+
+ng build --prod 
+http-server -c-1 ./dist/toBeBetter
 ```
