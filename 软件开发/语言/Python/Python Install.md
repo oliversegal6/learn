@@ -90,3 +90,7 @@ if __name__ == '__main__':
 
 host一定不要用默认的"127.0.0.1"，不然容器启动，即使映射了端口，在浏览器中也仍然是无法访问服务的。
 将host设置为"0.0.0.0"，这样Flask容器可以接受到宿主的请求。
+
+#### 启动示例
+
+docker run -p 5000:5000 -v /home/oliver/Work/github/stockQuant:/usr/src/stockmining  -w /usr/src/stockmining oliver/python:3.5a python flaskMain.py 0.0.0.0:5000
