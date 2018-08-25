@@ -10,6 +10,14 @@ npm install -g @angular/cli@6.0.0
 npm install typescript@2.6.2
 ```
 
+如果npm 比较满可以使用 cnpm
+npm install cnpm -g --registry=https://registry.npm.taobao.org
+
+或加registry
+npm i --save-dev @angular-devkit/build-angular --registry=https://registry.npm.taobao.org
+
+以后所有的安装都用 cnpm install
+
 #### 步骤2. 创建新项目
 运行下列命令来生成一个新项目以及应用的骨架代码：
 `ng new lifeblog`
