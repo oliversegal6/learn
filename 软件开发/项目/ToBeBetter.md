@@ -13,3 +13,5 @@ docker run -p 27017:27017 -v /home/oliver/Work/Develop/mongodb/db:/data/db -d mo
 ### Flask Restful Service 
 
 docker run -p 5000:5000 -v /home/oliver/Work/github/stockQuant:/usr/src/stockmining  -w /usr/src/stockmining oliver/python:3.5a python flaskMain.py 0.0.0.0:5000
+
+访问RESTFUL API: http://localhost:5000/api/doc/
