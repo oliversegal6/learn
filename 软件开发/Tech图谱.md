@@ -3,6 +3,7 @@
 # 软件开发
 
 ## 语言
+
 ### Python
 
 ### Java
@@ -48,17 +49,92 @@
 - OAuth：与其他网站联合认证的方式，有多种，分别了解。
 - 用户认证：一开始就应该花大精力设计好用户认证系统，包括不要明文存储密码，包括严格限制Cookie和Session的使用，包括用户认证信息的缓存等。如果需要设计一个长期运行的大系统，强烈建议使用签名来保证Cookie的不可伪造，同时常见信息直接存储Cookie，这样可以避免每次Request都访问数据库。
 
-## 系统架构
-#### 分布式系统+Zookeeper 
+## Web开发
 
-#### 消息中间件: RocketMQ, Kafka
+### HTTP、Servlet
+
+- HTTP协议，Servlet模型组件
+- Servlet编程模型，多线程，线程池，ThreadLocal
+- Stateless设计
+
+### API设计
+
+设计Restfull API
+
+### 序列化/JSON
+
+序列化原理以及定制序列化
+
+
+
+## 框架
+
+### Spring
+
+#### Spring Framework
+
+- IOC原理
+- 单例/原型模式，工厂模式
+- AOP、装饰器模式
+- 其他常用模式，适配器、观察者、策略，模板方法
+- Spring JDBC. 声明式事物/事物嵌套原理
+
+
+### Spring Boot
+
+Spring Boot + Spring MVC
+
+## 分布式架构设计
+
+### 服务治理
+
+微服务原理，分布式服务治理，服务注册与发现
+
+### 配置中心
+
+配置中心原理/优点/配置变更
+
+### 网管设计
+
+网关模式/原理
+
+### 声明式服务调用
+
+Feign+Hystrix+客户端路由+服务降级
+
+### 异步驱动设计，消息服务: JMS, RocketMQ, Kafka
+
 异步处理、缓解服务器压力，解藕系统
+
+- 消息系统概念，模型，Queue, Topic
+- JMS
 - RocketMQ
 - Kafka
 
-#### 搜索引擎相关技术知识: ElasticSearch, Logstash, Kibana
+### 消息幂等性设计
 
-#### 高并发+高可用+微服务分布式互联网架构实战
+幂等性原理，实现方式，重试机制，
+
+### 分布式架构JVM监控与JMX
+
+Spring集成JMX,实现MBean，使用JConsole
+
+### 流量控制设计
+
+限流设计/熔断设计/服务降级/Nginx反向代理+limit限速
+
+### 边缘计算模式
+
+什么是边缘计算，使用它实现秒杀业务
+
+
+
+
+
+### 搜索引擎相关技术知识: ElasticSearch, Logstash, Kibana
+
+### 高并发+高可用+微服务分布式互联网架构实战
+
 - Nginx
 - Redis Transaction事务、pipeline以及优化和Sentinel高可用集群
 - Nginx分离zuul+Redis实现token网关登录认证
@@ -69,26 +145,32 @@
 
 ## 数据存储
 
-#### 关系式数据库
+### 关系式数据库
+
 - Create、Query、Delete、Update操作外。还需要能自行建立索引
 - 数据库的平行扩展
 - 如何进行性能调试。以及了解常见查询操作的性能级别，常见的查询性能瓶颈点
 - mysql，对它基本的参数优化，慢查询日志分析，主从复制的配置
+- 配置Spring多数据源，通过Annotation+AOP实现一键切换
+- MySql分页，以及常见调优原理
+- 分布式事务，补偿式设计
 
-#### Hadoop Hive分布式大数据存储
+### Hadoop Hive分布式大数据存储
+
 nfs,fastdfs,tfs,Hadoop了解他们的优缺点，适用场景 。 
 
-#### MongoDB
+### MongoDB
 
-#### 分布式缓存技术memcached,redis
+### 分布式缓存技术memcached,redis
+
 把硬盘上的内容放到内存里来提速，算法一致性hash
 
 
 ## 机器学习、人工智能
 
-#### Python
+### Python
 
-#### TensorFlow 
+### TensorFlow 
 
 
 ## Server
