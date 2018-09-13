@@ -1,11 +1,12 @@
 
-## 1 网络编程基本概念，TCP/IP协议简介
-### 1.1 网络基础知识
+# 1 网络编程基本概念，TCP/IP协议简介
+
+## 1.1 网络基础知识
 网络编程的目的就是指直接或间接地通过网络协议与其他计算机进行通讯。网络编程中有两个主要的问题，一个是如何准确的定位网络上一台或多台主机，另一个就是找到主机后如何可靠高效的进行数据传输。在TCP/IP协议中IP层主要负责网络主机的定位，数据传输的路由，由IP地址可以唯一地确定Internet上的一台主机。而TCP层则提供面向应用的可靠的或非可靠的数据传输机制，这是网络编程的主要对象，一般不需要关心IP层是如何处理数据的。
 
 　　目前较为流行的网络编程模型是客户机/服务器（C/S）结构。即通信双方一方作为服务器等待客户提出请求并予以响应。客户则在需要服务时向服务器提出申请。服务器一般作为守护进程始终运行，监听网络端口，一旦有客户请求，就会启动一个服务进程来响应该客户，同时自己继续监听服务端口，使后来的客户也能及时得到服务。
   
-### 1.3两类传输协议：TCP；UDP
+## 1.3两类传输协议：TCP；UDP
 
 　　尽管TCP/IP协议的名称中只有TCP这个协议名，但是在TCP/IP的传输层同时存在TCP和UDP两个协议。
 TCP是Tranfer Control Protocol的简称，是一种面向连接的保证可靠传输的协议。通过TCP协议传输，得到的是一个顺序的无差错的数据流。发送方和接收方的成对的两个socket之间必须建立连接，以便在TCP协议的基础上进行通信，当一个socket（通常都是server socket）等待建立连接时，另一个socket可以要求进行连接，一旦这两个socket连接起来，它们就可以进行双向数据传输，双方都可以进行发送或接收操作。
@@ -16,11 +17,11 @@ TCP是Tranfer Control Protocol的简称，是一种面向连接的保证可靠�
 　　总之，TCP在网络通信上有极强的生命力，例如远程连接（Telnet）和文件传输（FTP）都需要不定长度的数据被可靠地传输。相比之下UDP操作简单，而且仅需要较少的监护，因此通常用于局域网高可靠性的分散系统中client/server应用程序。
 　　读者可能要问，既然有了保证可靠传输的TCP协议，为什么还要非可靠传输的UDP协议呢？主要的原因有两个。一是可靠的传输是要付出代价的，对数据内容正确性的检验必然占用计算机的处理时间和网络的带宽，因此TCP传输的效率不如UDP高。二是在许多应用中并不需要保证严格的传输可靠性，比如视频会议系统，并不要求音频视频数据绝对的正确，只要保证连贯性就可以了，这种情况下显然使用UDP会更合理一些。
   
-## 2 基于URL的高层次Java网络编程
-### 2.1一致资源定位器URL
+# 2 基于URL的高层次Java网络编程
+## 2.1一致资源定位器URL
 
 URL(Uniform Resource Locator)是一致资源定位器的简称，它表示Internet上某一资源的地址。通过URL我们可以访问Internet上的各种网络资源，比如最常见的WWW，FTP站点。浏览器通过解析给定的URL可以在网络上查找相应的文件或其他资源。
-### 2.2 URL的组成
+## 2.2 URL的组成
 
 protocol://resourceName
 　　协议名（protocol）指明获取资源所使用的传输协议，如http、ftp、gopher、file等，资源名（resourceName）则应该是资源的完整地址，包括主机名、端口号、文件名或文件内部的一个引用。例如：
@@ -29,7 +30,8 @@ protocol://resourceName
 　　http://home.netscape.com/home/welcome.html 协议名://机器名＋文件名
 　　http://www.gamelan.com:80/Gamelan/network.html#BOTTOM 协议名://机器名＋端口号＋文件名＋内部引用.
   
-### 2.3 创建一个URL
+## 2.3 创建一个URL
+
 为了表示URL， java.net中实现了类URL。我们可以通过下面的构造方法来初始化一个URL对象：
 　　（1） public URL (String spec);
 　　　　　通过一个表示URL地址的字符串可以构造一个URL对象。
@@ -43,6 +45,7 @@ protocol://resourceName
 　　（4） public URL(String protocol, String host, int port, String file);
 　　　　　URL gamelan=new URL("http", "www.gamelan.com", 80, "Pages/Gamelan.network.html");
 　　注意：类URL的构造方法都声明抛弃非运行时例外（MalformedURLException），因此生成URL对象时，我们必须要对这一例外进行处理，通常是用try-catch语句进行捕获。格式如下：
+
 ```java
 try{
 　　　　　URL myURL= new URL(…)
@@ -63,12 +66,13 @@ try{
 　　　public String getUserInfo() 获得使用者的信息
 　　　 public String getRef() 获得该URL的锚
 	
-### 2.5 从URL读取WWW网络资源
+## 2.5 从URL读取WWW网络资源
 
 当我们得到一个URL对象后，就可以通过它读取指定的WWW资源。这时我们将使用URL的方法openStream()，其定义为：
 　　　　　　　　　InputStream openStream();
 　　
 　　方法openSteam()与指定的URL建立连接并返回InputStream类的对象以从这一连接中读取数据。
+
 ```java
 　　public class URLReader {
 　　public static void main(String[] args) throws Exception { 
@@ -85,7 +89,8 @@ try{
 　　}
 　　}
 ```
-### 2.6 通过URLConnetction连接WWW
+
+## 2.6 通过URLConnetction连接WWW
 
 通过URL的方法openStream()，我们只能从网络上读取数据，如果我们同时还想输出数据，例如向服务器端的CGI程序发送一些数据，我们必须先与URL建立连接，然后才能对其进行读写，这时就要用到类URLConnection了。CGI是公共网关接口（Common Gateway Interface）的简称，它是用户浏览器和服务器端的应用程序进行连接的接口，有关CGI程序设计，请读者参考有关书籍。
 
@@ -103,7 +108,8 @@ try{
 　　类URLConnection提供了很多方法来设置或获取连接参数，程序设计时最常使用的是getInputStream()和getOurputStream(),其定义为：
 　　　　　InputSteram getInputSteram();
 　　　　　OutputSteram getOutputStream();
-　　通过返回的输入/输出流我们可以与远程对象进行通信。看下面的例子：
+　　通过返回的输入/输出流我们可以与远程对象进行通信。看下面的例子
+
 ```java
 　　URL url =new URL ("http://www.javasoft.com/cgi-bin/backwards"); 
 　　//创建一URL对象
@@ -120,12 +126,15 @@ try{
 ```
 　　基于URL的网络编程在底层其实还是基于下面要讲的Socket接口的。WWW，FTP等标准化的网络服务都是基于TCP协议的，所以本质上讲URL编程也是基于TCP的一种应用.
   
-## 3 基于Socket的低层次Java网络编程
-### 3.1 Socket通讯
+# 3 基于Socket的低层次Java网络编程
+
+## 3.1 Socket通讯
+
 网络上的两个程序通过一个双向的通讯连接实现数据的交换，这个双向链路的一端称为一个Socket。Socket通常用来实现客户方和服务方的连接。Socket是TCP/IP协议的一个十分流行的编程界面，一个Socket由一个IP地址和一个端口号唯一确定。
 　　在传统的UNIX环境下可以操作TCP/IP协议的接口不止Socket一个，Socket所支持的协议种类也不光TCP/IP一种，因此两者之间是没有必然联系的。在Java环境下，Socket编程主要是指基于TCP/IP协议的网络编程。
   
-### 3.2 Socket通讯的一般过程
+## 3.2 Socket通讯的一般过程
+
 使用Socket进行Client/Server程序设计的一般连接过程是这样的：Server端Listen(监听)某个端口是否有连接请求，Client端向Server端发出Connect(连接)请求，Server端向Client端发回Accept（接受）消息。一个连接就建立起来了。Server端和Client端都可以通过Send，Write等方法与对方通信。
 对于一个功能齐全的Socket，都要包含以下基本结构，其工作过程包含以下四个基本的步骤：
 　　（1） 创建Socket；
@@ -133,7 +142,8 @@ try{
 　　（3） 按照一定的协议对Socket进行读/写操作；
 　　（4） 关闭Socket.
   
-### 3.3 创建Socket
+## 3.3 创建Socket
+
 java在包java.net中提供了两个类Socket和ServerSocket，分别用来表示双向连接的客户端和服务端。这是两个封装得非常好的类，使用很方便。其构造方法如下：
 　　Socket(InetAddress address, int port);
 　　Socket(InetAddress address, int port, boolean stream);
@@ -152,7 +162,8 @@ java在包java.net中提供了两个类Socket和ServerSocket，分别用来表�
 　　注意，在选择端口时，必须小心。每一个端口提供一种特定的服务，只有给出正确的端口，才能获得相应的服务。0~1023的端口号为系统所保留，例如http服务的端口号为80,telnet服务的端口号为21,ftp服务的端口号为23, 所以我们在选择端口号时，最好选择一个大于1023的数以防止发生冲突。
 　　在创建socket时如果发生错误，将产生IOException，在程序中必须对之作出处理。所以在创建Socket或ServerSocket是必须捕获或抛出例外。
   
-### 3.8 简单的Client/Server程序设计
+## 3.8 简单的Client/Server程序设计
+
 下面我们给出一个用Socket实现的客户和服务器交互的典型的C/S结构的演示程序，读者通过仔细阅读该程序，会对前面所讨论的各个概念有更深刻的认识。程序的意义请参考注释。
 1. 客户端程序
 ```java
@@ -192,7 +203,9 @@ java在包java.net中提供了两个类Socket和ServerSocket，分别用来表�
 　　}
 }
 ```
+
 　2. 服务器端程序
+
 ```java
 　　import java.io.*;
 　　import java.net.*;
@@ -253,7 +266,7 @@ java在包java.net中提供了两个类Socket和ServerSocket，分别用来表�
 　　}
 ```
 
-### 3.9 支持多客户的client/server程序设计
+## 3.9 支持多客户的client/server程序设计
 
 前面提供的Client/Server程序只能实现Server和 一个客户的对话。在实际应用中，往往是在服务器上运行一个永久的程序，它可以接收来自其他多个客户端的请求，提供相应的服务。为了实现在服务器方给多个客 户提供服务的功能，需要对上面的程序进行改造，利用多线程实现多客户机制。服务器总是在指定的端口上监听是否有客户请求，一旦监听到客户请求，服务器就会 启动一个专门的服务线程来响应该客户的请求，而服务器本身在启动完线程之后马上又进入监听状态，等待下一个客户的到来。
 ```java
@@ -281,15 +294,15 @@ ServerSocket serverSocket=null;
 　　　public void run() { //线程主体
 　　　　try{//在这里实现数据的接受和发送}
 ```
-### 3.10 据报Datagram通讯
+## 3.10 据报Datagram通讯
 前面在介绍TCP/IP协议的时候，我们已经提到，在TCP/IP协议的传输层除了TCP协议之外还有一个UDP协议，相比而言UDP的应用不如TCP广泛，几个标准的应用层协议HTTP，FTP，SMTP…使用的都是TCP协议。但是，随着计算机网络的发展，UDP协议正越来越来显示出其威力，尤其是在需要很强的实时交互性的场合，如网络游戏，视频会议等，UDP更是显示出极强的威力，下面我们就介绍一下Java环境下如何实现UDP网络传输。
 
-### 3.11 什么是Datagram
+## 3.11 什么是Datagram
 所谓数据报（Datagram）就跟日常生活中的邮件系统一样，是不能保证可靠的寄到的，而面向链接的TCP就好比电话，双方能肯定对方接受到了信息。在本章前面，我们已经对UDP和TCP进行了比较，在这里再稍作小节：
 　　TCP，可靠，传输大小无限制，但是需要连接建立时间，差错控制开销大。
 　　UDP，不可靠，差错控制开销较小，传输大小限制在64K以下，不需要建立连接。
 
-### 3.12 Datagram通讯的表示方法：DatagramSocket；DatagramPacket
+## 3.12 Datagram通讯的表示方法：DatagramSocket；DatagramPacket
 包java.net中提供了两个类DatagramSocket和DatagramPacket用来支持数据报通信，DatagramSocket用于在程序之间建立传送数据报的通信连接， DatagramPacket则用来表示一个数据报。先来看一下DatagramSocket的构造方法：
 　　　DatagramSocket（）；
 　　　DatagramSocket（int prot）;
@@ -310,10 +323,12 @@ ServerSocket serverSocket=null;
 　　Socket.send(packet)；
     在构造数据报时，要给出InetAddress类参数。类InetAddress在包java.net中定义，用来表示一个Internet地址，我们可以通过它提供的类方法getByName（）从一个表示主机名的字符串获取该主机的IP地址，然后再获取相应的地址信息。
 	
-### 3.14 用数据报进行广播通讯
+## 3.14 用数据报进行广播通讯
 
 DatagramSocket只允许数据报发送一个目的地址，java.net包中提供了一个类MulticastSocket，允许数据报以广播方式发送到该端口的所有客户。MulticastSocket用在客户端，监听服务器广播来的数据。
+
 1. 客户方程序:MulticastClient.java
+
 ```java
 　　import java.io.*;
 　　import java.net.*;
@@ -346,7 +361,9 @@ DatagramSocket只允许数据报发送一个目的地址，java.net包中提供�
 　　　}
 　}
 ```
+
 　2. 服务器方程序:MulticastServer.java
+
 ```java
 　　public class MulticastServer{
 　　　　public static void main(String args[]) throws java.io.IOException 
@@ -356,7 +373,9 @@ DatagramSocket只允许数据报发送一个目的地址，java.net包中提供�
 　　　　}
 　　}
 ```
+
 　3. 程序MulticastServerThread.java
+
 ```java
 　　import java.io.*;
 　　import java.net.*;
@@ -403,6 +422,7 @@ DatagramSocket只允许数据报发送一个目的地址，java.net包中提供�
 　　　}
 　}
 ```
+
 小结
 本讲主要讲解了Java环境下的网络编程。因为TCP/IP协议是Java网络编程的基础知识，本讲开篇重点介绍了TCP/IP协议中的一些概念，TCP/IP协议本身是一个十分庞大的系统，用几个小节是不可能讲清楚的。所以我们只是联系实际，讲解了一些最基本的概念，帮助学生理解后面的相关内容。重点有一下几个概念：主机名，IP，端口，服务类型，TCP，UDP。
 

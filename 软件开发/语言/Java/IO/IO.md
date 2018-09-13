@@ -11,6 +11,7 @@ Java的IO包主要关注的是从原始数据源的读取以及输出原始数�
 ## Java IO的用途和特征
 
 Java IO中包含了许多InputStream、OutputStream、Reader、Writer的子类
+
 - 文件访问
 - 网络访问
 - 内存缓存访问
@@ -23,6 +24,7 @@ Java IO中包含了许多InputStream、OutputStream、Reader、Writer的子类
 - 读写对象
 
 ## 流
+
 在Java IO中，流是一个核心的概念。流从概念上来说是一个连续的数据流。你既可以从流中读取数据，也可以往流中写数据
 
 ![IO流](./pic/IO流.png "IO流")
@@ -30,6 +32,7 @@ Java IO中包含了许多InputStream、OutputStream、Reader、Writer的子类
 InputStream和Reader与数据源相关联，OutputStream和writer与目标媒介相关联
 
 ### InputStream, OutputStream, Reader 和Writer
+
 一个程序需要InputStream或者Reader从数据源读取数据，需要OutputStream或者Writer将数据写入到目标媒介中。流和数组不一样，不能通过索引读写数据。在流中，你也不能像数组那样前后移动读取数据，除非使用RandomAccessFile 处理文件。流仅仅只是一个连续的数据流。
 
 ![IOClass](./pic/IOClass.png "IOClass")
@@ -40,6 +43,7 @@ InputStream和Reader与数据源相关联，OutputStream和writer与目标媒介
 
 
 IO Reader/Writer 例子
+
 ```java
 Reader reader = new FileReader("c:\\data\\myfile.txt");
 int data = reader.read();
