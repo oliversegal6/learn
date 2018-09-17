@@ -1,4 +1,7 @@
+# Java多线程
+
 ## 线程与进程
+
 1. 线程：进程中负责程序执行的执行单元, 线程本身依靠程序进行运行, 线程是程序中的顺序控制流，只能使用分配给程序的资源和环境
 2. 进程：执行中的程序,一个进程至少包含一个线程
 3. 单线程：程序中只存在一个线程，实际上主方法就是一个主线程
@@ -30,15 +33,15 @@ class MyThread extends Thread{
         System.out.println("主动创建的第"+num+"个线程.  子线程ID:"+Thread.currentThread().getId()););
     }
 }
-
 ```
+
 1）thread1和thread2的线程ID不同，thread2和主线程ID相同，说明通过run方法调用并不会创建新的线程，而是在主线程中直接运行run方法，跟普通的方法调用没有任何区别；
 
 2）虽然thread1的start方法调用在thread2的run方法前面调用，但是先输出的是thread2的run方法调用的相关信息，说明新线程创建的过程不会阻塞主线程的后续执行。
 
 ### 实现Runnable接口
 
-```
+```java
 public class Test {
     public static void main(String[] args)  {
         System.out.println("主线程ID："+Thread.currentThread().getId());
@@ -57,11 +60,13 @@ class MyRunnable implements Runnable{
     }
 }
 ```
+
 这种方式必须将Runnable作为Thread类的参数，然后通过Thread的start方法来创建一个新线程来执行该子任务。如果调用Runnable的run方法的话，是不会创建新线程的，这根普通的方法调用没有任何区别。
 直接继承Thread类的话，可能比实现Runnable接口看起来更加简洁，但是由于Java只允许单继承，所以如果自定义类需要继承其他类，则只能选择实现Runnable接口。
 
 ## 使用ExecutorService、Callable、Future实现有返回结果的多线程
-Executor，Executors，ExecutorService，CompletionService、Callable、Future这个对象都是属于Executor框架中的功能类
+
+Executor，ExecutorService，CompletionService、Callable、Future这个对象都是属于Executor框架中的功能类
 
 可返回值的任务必须实现Callable接口，类似的，无返回值的任务必须Runnable接口。执行Callable任务后，可以获取一个Future的对象，在该对象上调用get就可以获取到Callable任务返回的Object了，再结合线程池接口ExecutorService就可以实现传说中有返回结果的多线程了
 并发编程的一种编程方式是把任务拆分为一些列的小任务，即Runnable，然后在提交给一个Executor执行，Executor.execute(Runnalbe) 。Executor在执行时使用内部的线程池完成操作。
@@ -70,12 +75,14 @@ Executor，Executors，ExecutorService，CompletionService、Callable、Future�
 
 Executor接口表示线程池，它的execute(Runnable task)方法用来执行Runnable类型的任务。Executor的子接口ExecutorService中声明了管理线程池的一些方法，比如用于关 闭线程池的shutdown()方法等。Executors类中包含一些静态方法，它们负责生成各种类型的线程池ExecutorService实例
 
-Executors类的静态方法	创建的ExecutorService线程池的类型
-- newCachedThreadPool()	在有任务时才创建新线程，空闲线程被保留60秒
-- newFixedThreadPool(int nThreads)	线程池中包含固定数目的线程，空闲线程会一直保留。参数nThreads设定线程池中线程的数目
-- newSingleThreadExecutor()	线程池中只有一个工作线程，它依次执行每个任务
-- newScheduledThreadPool(int corePoolSize)	线程池能按时间计划来执行任务，允许用户设定计划执行任务的时间。参数corePoolSize设定线程池中线程的最小数目。当任务较多时，线程池可能会创建更多的工作线程来执行任务
-- newSingleThreadScheduledExecutor()	线程池中只有一个工作线程，它能按时间计划来执行任务
+Executors类的静态方法创建的ExecutorService线程池的类型
+
+- newCachedThreadPool()在有任务时才创建新线程，空闲线程被保留60秒
+- newFixedThreadPool(int nThreads)线程池中包含固定数目的线程，空闲线程会一直保留。参数nThreads设定线程池中线程的数目
+- newSingleThreadExecutor()线程池中只有一个工作线程，它依次执行每个任务
+- newScheduledThreadPool(int corePoolSize)线程池能按时间计划来执行任务，允许用户设定计划执行任务的时间。参数corePoolSize设定线程池中线程的最小数目。当任务较多时，线程池可能会创建更多的工作线程来执行任务
+- newSingleThreadScheduledExecutor()线程池中只有一个工作线程，它能按时间计划来执行任务
+
 ```java
 Executor executor = Executors.newFixedThreadPool(10);  
 Runnable task = new Runnable() {  
@@ -90,53 +97,66 @@ executor = Executors.newScheduledThreadPool(10);
 ScheduledExecutorService scheduler = (ScheduledExecutorService) executor;  
 scheduler.scheduleAtFixedRate(task, 10, 10, TimeUnit.SECONDS);  
 ```
+
 ### 使用线程池的注意事项
 
 虽然线程池能大大提高服务器的并发性能，但使用它也会存在一定风险。与所有多线程应用程序一样，用线程池构建的应用程序容易产生各种并发问题，如对 共享资源的竞争和死锁。此外，如果线程池本身的实现不健壮，或者没有合理地使用线程池，还容易导致与线程池有关的死锁、系统资源不足和线程泄漏等问题。
-1. 死锁
-任何多线程应用程序都有死锁风险。造成死锁的最简单的情形是，线程A持有对象X的锁，并且在等待对象Y的锁，而线程B持有对象Y的锁，并且在等待对象X的锁。线程A与线程B都不释放自己持有的锁，并且等待对方的锁，这就导致两个线程永远等待下去，死锁就这样产生了。
-虽然任何多线程程序都有死锁的风险，但线程池还会导致另外一种死锁。在这种情形下，假定线程池中的所有工作线程都在执行各自任务时被阻塞，它们都在 等待某个任务A的执行结果。而任务A依然在工作队列中，由于没有空闲线程，使得任务A一直不能被执行。这使得线程池中的所有工作线程都永远阻塞下去，死锁 就这样产生了。
 
-2. 系统资源不足
+1.死锁
+
+任何多线程应用程序都有死锁风险。造成死锁的最简单的情形是，线程A持有对象X的锁，并且在等待对象Y的锁，而线程B持有对象Y的锁，并且在等待对象X的锁。线程A与线程B都不释放自己持有的锁，并且等待对方的锁，这就导致两个线程永远等待下去，死锁就这样产生了。
+虽然任何多线程程序都有死锁的风险，但线程池还会导致另外一种死锁。在这种情形下，假定线程池中的所有工作线程都在执行各自任务时被阻塞，它们都在 等待某个任务A的执行结果。而任务A依然在工作队列中，由于没有空闲线程，使得任务A一直不能被执行。这使得线程池中的所有工作线程都永远阻塞下去，死锁就这样产生了。
+
+2.系统资源不足
+
 如果线程池中的线程数目非常多，这些线程会消耗包括内存和其他系统资源在内的大量资源，从而严重影响系统性能。
 
-3. 并发错误
+3.并发错误
+
 线程池的工作队列依靠wait()和notify()方法来使工作线程及时取得任务，但这两个方法都难于使用。
-如果编码不正确，可能会丢失通知，导致工作线程一直保持空闲状态，无视工作队列中需要处理的任务。因此使用这些方法时，必须格外小心，即便是专家也 可能在这方面出错。最好使用现有的、比较成熟的线程池。例如，直接使用java.util.concurrent包中的线程池类。 
+如果编码不正确，可能会丢失通知，导致工作线程一直保持空闲状态，无视工作队列中需要处理的任务。因此使用这些方法时，必须格外小心，即便是专家也可能在这方面出错。最好使用现有的、比较成熟的线程池。例如，直接使用java.util.concurrent包中的线程池类。
 
-4. 线程泄漏
+4.线程泄漏
+
 使用线程池的一个严重风险是线程泄漏。对于工作线程数目固定的线程池，如果工作线程在执行 任务时抛出RuntimeException 或Error，并且这些异常或错误没有被捕获，那么这个工作线程就会异常终止，使得线程池永久失去了一个工作线程。如果所有的工作线程都异常终止，线程池 就最终变为空，没有任何可用的工作线程来处理任务。
-导致线程泄漏的另一种情形是，工作线程在执行一个任务时被阻塞，如等待用户的输入数据，但是由于用户一直不输入数据（可能是因为用户走开了），导致 这个工作线程一直被阻塞。这样的工作线程名存实亡，它实际上不执行任何任务了。假如线程池中所有的工作线程都处于这样的阻塞状态，那么线程池就无法处理新 加入的任务了。
+导致线程泄漏的另一种情形是，工作线程在执行一个任务时被阻塞，如等待用户的输入数据，但是由于用户一直不输入数据（可能是因为用户走开了），导致 这个工作线程一直被阻塞。这样的工作线程名存实亡，它实际上不执行任何任务了。假如线程池中所有的工作线程都处于这样的阻塞状态，那么线程池就无法处理新加入的任务了。
 
-5. 任务过载
+5.任务过载
+
 当工作队列中有大量排队等候执行的任务时，这些任务本身可能会消耗太多的系统资源而引起系统资源缺乏。
 综上所述，线程池可能会带来种种风险，为了尽可能避免它们，使用线程池时需要遵循以下原则。
 （1）如果任务A在执行过程中需要同步等待任务B的执行结果，那么任务A不适合加入到线程池的工作队列中。如果把像任务A一样的需要等待其他任务执行结果的任务加入到工作队列中，可能会导致线程池的死锁。
+
 （2）如果执行某个任务时可能会阻塞，并且是长时间的阻塞，则应该设定超时时间，避免工作线程永久的阻塞下去而导致线程泄漏。在服务器程序中，当线程等待客户连接，或者等待客户发送的数据时，都可能会阻塞。可以通过以下方式设定超时时间：
-- 调用ServerSocket的setSoTimeout(int timeout)方法，设定等待客户连接的超时时间，参见本章3.5.1节（SO_TIMEOUT选项）；
-- 对于每个与客户连接的Socket，调用该Socket的setSoTimeout(int timeout)方法，设定等待客户发送数据的超时时间，参见本书第2章的2.5.3节（SO_TIMEOUT选项）。
+- 调用ServerSocket的setSoTimeout(int timeout)方法，设定等待客户连接的超时时间
+- 对于每个与客户连接的Socket，调用该Socket的setSoTimeout(int timeout)方法，设定等待客户发送数据的超时时间
+
 （3）了解任务的特点，分析任务是执行经常会阻塞的I/O操作，还是执行一直不会阻塞的运算操作。前者时断时续地占用CPU，而后者对CPU具有更高的利用率。预计完成任务大概需要多长时间？是短时间任务还是长时间任务？
 根据任务的特点，对任务进行分类，然后把不同类型的任务分别加入到不同线程池的工作队列中，这样可以根据任务的特点，分别调整每个线程池。
+
 （4）调整线程池的大小。线程池的最佳大小主要取决于系统的可用CPU的数目，以及工作队列中任务的特点。假如在一个具有 N 个CPU的系统上只有一个工作队列，并且其中全部是运算性质（不会阻塞）的任务，那么当线程池具有 N 或 N+1 个工作线程时，一般会获得最大的 CPU 利用率。
 如果工作队列中包含会执行I/O操作并常常阻塞的任务，则要让线程池的大小超过可用CPU的数目，因为并不是所有工作线程都一直在工作。选择一个典 型的任务，然后估计在执行这个任务的过程中，等待时间（WT）与实际占用CPU进行运算的时间（ST）之间的比例WT/ST。对于一个具有N个CPU的系 统，需要设置大约N×(1+WT/ST)个线程来保证CPU得到充分利用。
 当然，CPU利用率不是调整线程池大小过程中唯一要考虑的事项。随着线程池中工作线程数目的增长，还会碰到内存或者其他系统资源的限制，如套接字、打开的文件句柄或数据库连接数目等。要保证多线程消耗的系统资源在系统的承载范围之内。
+
 （5）避免任务过载。服务器应根据系统的承载能力，限制客户并发连接的数目。当客户并发连接的数目超过了限制值，服务器可以拒绝连接请求，并友好地告知客户：服务器正忙，请稍后再试
 
 ### ExecutorService与生命周期
+
 ExecutorService扩展了Executor并添加了一些生命周期管理的方法。一个Executor的生命周期有三种状态，运行 ，关闭 ，终止 。Executor创建时处于运行状态。当调用ExecutorService.shutdown()后，处于关闭状态，isShutdown()方法返回true。这时，不应该再想Executor中添加任务，所有已添加的任务执行完毕后，Executor处于终止状态，isTerminated()返回true。
 如果Executor处于关闭状态，往Executor提交任务会抛出unchecked exception RejectedExecutionException。
 
 ### 使用Callable，Future返回结果
+
 Future<V>代表一个异步执行的操作，通过get()方法可以获得操作的结果，如果异步操作还没有完成，则，get()会使当前线程阻塞。FutureTask<V>实现了Future<V>和Runable<V>。Callable代表一个有返回值得操作
 
-```
+```java
 Callable<Integer> func = new Callable<Integer>(){  
     public Integer call() throws Exception {  
         System.out.println("inside callable");  
         Thread.sleep(1000);  
         return new Integer(8);  
-    }         
-};        
+    }
+};
 FutureTask<Integer> futureTask  = new FutureTask<Integer>(func);  
 Thread newThread = new Thread(futureTask);  
 newThread.start();  
@@ -154,6 +174,7 @@ ExecutoreService提供了submit()方法，传递一个Callable，或Runnable，�
 ### CompletionService
 
 getResult()方法的实现过程中，迭代了FutureTask的数组，如果任务还没有完成则当前线程会阻塞，如果我们希望任意字任务完成后就把其结果加到result中，而不用依次等待每个任务完成，可以使CompletionService。生产者submit()执行的任务。使用者take()已完成的任务，并按照完成这些任务的顺序处理它们的结果 。也就是调用CompletionService的take方法是，会返回按完成顺序放回任务的结果，CompletionService内部维护了一个阻塞队列BlockingQueue，如果没有任务完成，take()方法也会阻塞
+
 ```java
 public class ConcurrentCalculator2 {  
   
@@ -237,7 +258,9 @@ public class ConcurrentCalculator2 {
 ```
 
 ## 线程的状态
+
 线程状态有以下几种：
+
 - 创建（new）状态: 准备好了一个多线程的对象
 - 就绪（runnable）状态: 调线程对象创建后，其他线程调用了该对象的start()方法。该状态的线程位于可运行线程池中，变得可运行，等待获取CPU的使用权
 - 运行（running）状态: 就绪状态的线程获取了CPU，执行程序代码
@@ -288,6 +311,7 @@ Thread类的setPriority()和getPriority()方法分别用来设置和获取线程
 JVM提供了10个线程优先级，但与常见的操作系统都不能很好的映射。如果希望程序能移植到各个操作系统中，应该仅仅使用Thread类有以下三个静态常量作为优先级，这样能保证同样的优先级采用了同样的调度方式。
  
 ### 线程睡眠
+
 Thread.sleep(long millis)方法，使线程转到阻塞状态。millis参数设定睡眠的时间，以毫秒为单位。当睡眠结束后，就转为就绪（Runnable）状态。sleep()平台移植性好。
  
     sleep()使当前线程进入停滞状态（阻塞当前线程），让出CUP的使用、目的是不让当前线程独自霸占该进程所获的CPU资源，以留一定时间给其他线程执行的机会;
@@ -297,15 +321,17 @@ Thread.sleep(long millis)方法，使线程转到阻塞状态。millis参数设�
     在sleep()休眠时间期满后，该线程不一定会立即执行，这是因为其它线程可能正在运行而且没有被调度为放弃执行，除非此线程具有更高的优先级。
 
 ### 线程等待
+
 Object类中的wait()方法，导致当前的线程等待，直到其他线程调用此对象的 notify() 方法或 notifyAll() 唤醒方法。这个两个唤醒方法也是Object类中的方法，行为等价于调用 wait(0) 一样。
  
     wait()方法是Object类里的方法；当一个线程执行到wait()方法时，它就进入到一个和该对象相关的等待池中，同时失去（释放）了对象的机锁（暂时失去机锁，wait(long timeout)超时时间到后还需要返还对象锁）；其他线程可以访问；
     
     wait()使用notify或者notifyAlll或者指定睡眠时间来唤醒当前等待池中的线程。
     
-    wiat()必须放在synchronized block中，否则会在program runtime时扔出”java.lang.IllegalMonitorStateException“异常。
+    wait()必须放在synchronized block中，否则会在program runtime时扔出”java.lang.IllegalMonitorStateException“异常。
 
 ### 线程让步
+
 Thread.yield() 方法，暂停当前正在执行的线程对象，把执行机会让给相同或者更高优先级的线程。
  
  Thread.yield()方法作用是：暂停当前正在执行的线程对象，并执行其他线程。
@@ -314,11 +340,12 @@ Thread.yield() 方法，暂停当前正在执行的线程对象，把执行机�
 结论：yield()从未导致线程转到等待/睡眠/阻塞状态。在大多数情况下，yield()将导致线程从运行状态转到可运行状态，但有可能没有效果。
 
 ### 线程加入
+
 join()方法，等待其他线程终止。在当前线程中调用另一个线程的join()方法，则当前线程转入阻塞状态，直到另一个进程运行结束，当前线程再由阻塞转为就绪状态。
 
 在很多情况下，主线程创建并启动了线程，如果子线程中药进行大量耗时运算，主线程往往将早于子线程结束之前结束。这时，如果主线程想等待子线程执行完成之后再结束，比如子线程处理一个数据，主线程要取得这个数据中的值，就要用到join()方法了。方法join()的作用是等待线程对象销毁。
- 
-```
+
+```java
 public class Thread4 extends Thread{
     public Thread4(String name) {
         super(name);
@@ -342,7 +369,9 @@ public class Thread4 extends Thread{
     }
 }
 ```
+
 ### 线程唤醒
+
 Object类中的notify()方法，唤醒在此对象监视器上等待的单个线程。如果所有线程都在此对象上等待，则会选择唤醒其中一个线程。选择是任意性的，并在对实现做出决定时发生。线程通过调用其中一个 wait 方法，在对象的监视器上等待。 直到当前的线程放弃此对象上的锁定，才能继续执行被唤醒的线程。被唤醒的线程将以常规方式与在该对象上主动同步的其他所有线程进行竞争；例如，唤醒的线程在作为锁定此对象的下一个线程方面没有可靠的特权或劣势。类似的方法还有一个notifyAll()，唤醒在此对象监视器上等待的所有线程。
  注意：Thread中suspend()和resume()两个方法在JDK1.5中已经废除，不再介绍。因为有死锁倾向。
 
@@ -367,6 +396,7 @@ thread.setDaemon(true)必须在thread.start()之前设置，否则会跑出一�
 ## 线程同步锁机制
 
 ### ThreadLocal类
+
 - 用处：保存线程的独立变量。对一个线程类（继承自Thread)
 当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本。常用于用户登录控制，如记录session信息。
 - 实现：每个Thread都持有一个TreadLocalMap类型的变量（该类是一个轻量级的Map，功能与map一样，区别是桶里放的是entry而不是entry的链表。功能还是一个map。）以本身为key，以目标为value。
@@ -398,6 +428,7 @@ lock: 在java.util.concurrent包内。共有三个实现：
 - ReentrantLock
 - ReentrantReadWriteLock.ReadLock
 - ReentrantReadWriteLock.WriteLock
+
 主要目的是和synchronized一样， 两者都是为了解决同步问题，处理资源争端而产生的技术。功能类似但有一些区别。
 
 1. lock更灵活，可以自由定义多把锁的枷锁解锁顺序（synchronized要按照先加的后解顺序）
@@ -408,19 +439,22 @@ lock: 在java.util.concurrent包内。共有三个实现：
 6. 性能更高
 
 ### 容器类
+
 - BlockingQueue
 - ConcurrentHashMap
 
 #### BlockingQueue
+
 阻塞队列。该类是java.util.concurrent包下的重要类，通过对Queue的学习可以得知，这个queue是单向队列，可以在队列头添加元素和在队尾删除或取出元素。类似于一个管　　道，特别适用于先进先出策略的一些应用场景。普通的queue接口主要实现有PriorityQueue（优先队列）
 
 除了传统的queue功能（表格左边的两列）之外，还提供了阻塞接口put和take，带超时功能的阻塞接口offer和poll。put会在队列满的时候阻塞，直到有空间时被唤醒；take在队　列空的时候阻塞，直到有东西拿的时候才被唤醒。用于生产者-消费者模型尤其好用
 
-
 #### Thread类的sleep()方法和对象的wait()方法都可以让线程暂停执行，它们的区别
+
 sleep()方法（休眠）是线程类（Thread）的静态方法，调用此方法会让当前线程暂停执行指定的时间，将执行机会（CPU）让给其他线程，但是对象的锁依然保持，因此休眠时间结束后会自动恢复（线程回到就绪状态，请参考第66题中的线程状态转换图）。wait()是Object类的方法，调用对象的wait()方法导致当前线程放弃对象的锁（线程暂停执行），进入对象的等待池（wait pool），只有调用对象的notify()方法（或notifyAll()方法）时才能唤醒等待池中的线程进入等锁池（lock pool），如果线程重新获得对象的锁就可以进入就绪状态。
 
 #### 线程的sleep()方法和yield()方法的区别
+
 1. sleep()方法给其他线程运行机会时不考虑线程的优先级，因此会给低优先级的线程以运行的机会；yield()方法只会给相同优先级或更高优先级的线程以运行的机会；
 2. 线程执行sleep()方法后转入阻塞（blocked）状态，而执行yield()方法后转入就绪（ready）状态；
 3. sleep()方法声明抛出InterruptedException，而yield()方法没有声明任何异常；
