@@ -1,5 +1,48 @@
 # MongoDB
 
+## MongoDB文档模型的好处
+
+MongoDB是文档型数据库，是Schema Free的
+
+1、json形式
+在MongoDB中，开发人员可以直接将一个json数据存储进MongoDB，这对于开发人员来说是非常友好额；
+
+2、读写性能高
+在关系型数据库中，我们经常会进行join、子查询等关联性需求，这时候往往会带来较多的随机IO，而在MongoDB中，我们可以通过合理的数据模型设计来将很多的关联需求通过内嵌、反范式的方式实现，减少了随机IO；
+
+3、schema free
+MongoDB的数据模型是灵活的，无需为了Online DDL而操心，不同的document也可以有不同的结构。
+
+MongoDB的可以通过内嵌来减少联合查询的需求，可以通过反范式来减少随机IO
+
+## Document Validation
+
+MongoDB 3.2推出了Document Validation，Document Validation, MongoDB官方想表达”schema free but you may need some rules
+
+phone字段为string类型或者email字段要匹配”@mongodb.com”结尾，或者status为”Unknown”或者"Incomplete"
+
+``` mongodb
+db.createCollection("contacts", 
+    { validator: {$or:
+        [
+            { phone: {$type:"string"}},
+            { email: {$regex:/@mongodb\.com$/}},
+            { status: {$in:["Unknown","Incomplete"]}}
+        ]}})
+```
+
+多了一个validationLevel参数，我们可以在设置validation的时候指定我们的validationLevel级别：
+
+- 默认级别是strict，对该collection已有的和以后新增的document都进行validation验证；
+
+- 可以设置为moderate，仅对已经存在的document进行validation限定；
+
+同时还有validationAction参数来指定当有不符合validation规则的数据进行update或者insert的时候， 我们mongodb实例如何进行处理。
+
+- 默认级别为error，mongodb将拒绝这些不符合validation规则的insert和update。
+
+- 可以设置为warn，mongodb会在日志中记录，但是允许这类insert和update操作。
+
 ## MongoDB 集群
 
 mongodb的集群搭建方式主要有三种，主从模式，Replica set模式，sharding模式, 三种模式各有优劣，适用于不同的场合，属Replica set应用最为广泛，主从模式现在用的较少，sharding模式最为完备，但配置维护较为复杂。本文我们来看下Replica Set模式的搭建方法。
