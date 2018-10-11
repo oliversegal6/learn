@@ -461,9 +461,11 @@ sleep()方法（休眠）是线程类（Thread）的静态方法，调用此方�
 4. sleep()方法比yield()方法（跟操作系统CPU调度相关）具有更好的可移植性。
 
 #### CAS
+
 CAS，全称为Compare and Swap，即比较-替换。假设有三个操作数：内存值V、旧的预期值A、要修改的值B，当且仅当预期值A和内存值V相同时，才会将内存值修改为B并返回true，否则什么都不做并返回false。当然CAS一定要volatile变量配合，这样才能保证每次拿到的变量是主内存中最新的那个值，否则旧的预期值A对某条线程来说，永远是一个不会变的值A，只要某次CAS操作失败，永远都不可能成功。
 
 #### AQS
+
 AQS全称为AbstractQueuedSychronizer，翻译过来应该是抽象队列同步器。
 
 如果说java.util.concurrent的基础是CAS的话，那么AQS就是整个Java并发包的核心了，ReentrantLock、CountDownLatch、Semaphore等等都用到了它。AQS实际上以双向队列的形式连接所有的Entry，比方说ReentrantLock，所有等待的线程都被放在一个Entry中并连成双向队列，前面一个线程使用ReentrantLock好了，则双向队列实际上的第一个Entry开始运行。
