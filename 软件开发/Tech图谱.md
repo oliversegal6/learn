@@ -128,7 +128,10 @@ Spring集成JMX,实现MBean，使用JConsole
 什么是边缘计算，使用它实现秒杀业务
 
 
-
+### 消息中间件: RocketMQ, Kafka
+异步处理、缓解服务器压力，解藕系统
+- RocketMQ
+- Kafka
 
 
 ### 搜索引擎相关技术知识: ElasticSearch, Logstash, Kibana
