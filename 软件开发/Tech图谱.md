@@ -28,8 +28,7 @@
 #### 线程、锁基础知识
 - java多线程同步异步
 - 池技术，对象池，连接池，线程池
-- 深入剖析volatile、synchronized、Lock、AtomicX关键字（一）
-- 深入剖析volatile、synchronized、Lock、AtomicX关键字（二）
+- 深入剖析volatile、AQS、synchronized、Lock、AtomicX关键字
 - 深入剖析java concurrent 包 阻塞队列、ConcurrentMap
 - 深入剖析java concurrent包 闭锁、栅栏、交换机、信号量
 - 深入剖析java concurrent 包 执行器服务、线程池、Jvm调优
@@ -158,9 +157,9 @@ Spring集成JMX,实现MBean，使用JConsole
 - MySql分页，以及常见调优原理
 - 分布式事务，补偿式设计
 
-### Hadoop Hive分布式大数据存储
+### Hadoop Hive 分布式大数据存储
 
-nfs,fastdfs,tfs,Hadoop了解他们的优缺点，适用场景 。 
+nfs, fastdfs, tfs, Hadoop 了解他们的优缺点，适用场景 。 
 
 ### MongoDB
 
@@ -179,6 +178,7 @@ nfs,fastdfs,tfs,Hadoop了解他们的优缺点，适用场景 。
 ## Server
 
 如果一开始就将静态文件与主站内容混杂在一起，未来就是个灾难，具体参考CDN的应用方式
+
 #### Apache
 
 #### nginx
