@@ -18,28 +18,30 @@
 ### 　　虚拟机参数设置 
 
 　　1．启用调试服务 
+  
     ```
 　　　　-Xdebug 启用调试 
 　　　　-Xrunjdwp:<sub-options> 加载JVM的JPDA参考实现库 
     ```
+    
 　　2．Xrunjdwp子参数（sub-options）配置 
 　　
     ```
     Xrunjdwp子参数的配置格式如下 
 　　　　-Xrunjdwp:<name1>[=<value1>],<name2>[=<value2>]...
 　　几个例子 
-　　`-Xrunjdwp:transport=dt_socket,server=y,address=8000 `
+　　-Xrunjdwp:transport=dt_socket,server=y,address=8000
 　　在8000端口监听Socket连接，挂起VM并且不加载运行主函数直到调试请求到达 
-　　`-Xrunjdwp:transport=dt_shmem,server=y,suspend=n `
+　　-Xrunjdwp:transport=dt_shmem,server=y,suspend=n
 　　选择一个可用的共享内存（因为没有指address）并监听该内存连接，同时加载运行主函数 
-　　`-Xrunjdwp:transport=dt_socket,address=myhost:8000` 
+　　-Xrunjdwp:transport=dt_socket,address=myhost:8000
 　　连接到myhost:8000提供的调试服务（server=n，以调试客户端存在），挂起VM并且不加载运行主函数 
-　　`-Xrunjdwp:transport=dt_shmem,address=mysharedmemory `
+　　-Xrunjdwp:transport=dt_shmem,address=mysharedmemory 
 　　通过共享内存的方式连接到调试服务，挂起VM并且不加载运行主函数 
-　　`-Xrunjdwp:transport=dt_socket,server=y,address=8000, `
+　　-Xrunjdwp:transport=dt_socket,server=y,address=8000, 
 　　onthrow=java.io.IOException,launch=/usr/local/bin/debugstub 
 　　等待java.io.IOException被抛出，然后挂起VM并监听8000端口连接，在接到调试请求后以命令/usr/local/bin/debugstub dt_socket myhost:8000执行 
-　　-`Xrunjdwp:transport=dt_shmem,server=y,onuncaught=y,launch=d:\bin\debugstub.exe `
+　　-Xrunjdwp:transport=dt_shmem,server=y,onuncaught=y,launch=d:\bin\debugstub.exe 
 　　等待一个RuntimeException被抛出，然后挂起VM并监听一个可用的共享内存，在接到调试请求后以命令d:\bin\debugstub.exe dt_shmem <address>执行,<address>是可用的共享内存
     ```
  ### 　　启动tomcat 
