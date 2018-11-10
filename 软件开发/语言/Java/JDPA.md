@@ -44,7 +44,7 @@
 　　-Xrunjdwp:transport=dt_shmem,server=y,onuncaught=y,launch=d:\bin\debugstub.exe 
 　　等待一个RuntimeException被抛出，然后挂起VM并监听一个可用的共享内存，在接到调试请求后以命令d:\bin\debugstub.exe dt_shmem <address>执行,<address>是可用的共享内存
     ```
- ### 　　启动tomcat 
+ ### 启动tomcat 
 
 `-Xdebug -Xrunjdwp:transport=%JPDA_TRANSPORT%,address=%JPDA_ADDRESS%,server=y,suspend=n`
 
