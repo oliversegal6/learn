@@ -48,6 +48,8 @@ npm install http-server --global
 
 #### 添加ng-zorro
 
+Ant Design Angular
+
 `ng add ng-zorro-antd`
 
 

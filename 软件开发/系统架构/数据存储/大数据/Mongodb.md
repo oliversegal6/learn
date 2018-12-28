@@ -184,3 +184,188 @@ MongoDB将数据拆分为chunk，每个chunk都是collection中的一段连续�
 5.nearest：最邻近节点，读操作在最邻近的成员，可能是主节点或者从节点，关于最邻近的成员请参考。
 
 总结：副本集不是为了提高读性能存在的，在进行oplog的时候，读操作时被阻塞的。提高读取性能应该使用分片和索引，它的存在更多是作为数据冗余，备份。尤其当主库本来就面临着大量的写入压力，对于副本集的节点，也同样会面临写的压力。
+
+## 创建Sharding
+
+create folder 7001/data/db
+create folder 7002/data/db
+create folder 7003/data/db
+
+1. Start each member of the replica set with the appropriate options
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs0" --bind_ip localhost --port 7001 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/7001/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/7001/log/mongo.log &
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs0" --bind_ip localhost --port 7002 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/7002/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/7002/log/mongo.log &
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs0" --bind_ip localhost --port 7003 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/7003/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/7003/log/mongo.log &
+
+2. Connect a mongo shell to one of the mongod instances
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongo --port 7001
+
+3. Initiate the replica set.
+
+rs.initiate( {
+   _id : "rs0",
+   members: [
+      { _id: 1, host: "localhost:7001" },
+      { _id: 2, host: "localhost:7002" },
+      { _id: 3, host: "localhost:7003" }
+   ]
+})
+
+4. View the replica set configuration, Create and populate a new collection
+
+rs.conf()
+rs.status()
+
+```
+use test
+var bulk = db.test_collection.initializeUnorderedBulkOp();
+people = ["Marc", "Bill", "George", "Eliot", "Matt", "Trey", "Tracy", "Greg", "Steve", "Kristina", "Katie", "Jeff"];
+for(var i=0; i<1000000; i++){
+   user_id = i;
+   name = people[Math.floor(Math.random()*people.length)];
+   number = Math.floor(Math.random()*10001);
+   bulk.insert( { "user_id":user_id, "name":name, "number":number });
+}
+bulk.execute();
+```
+
+db.getCollection("test_collection").find()
+
+### Restart the Replica Set as a Shard
+
+1. Restart secondary members with the --shardsvr option
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs0" --shardsvr --bind_ip localhost --port 7002 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/7002/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/7002/log/mongo.log &
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs0" --shardsvr --bind_ip localhost --port 7003 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/7003/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/7003/log/mongo.log &
+
+2. Step down the primary, Restart the primary with the --shardsvr option
+
+rs.stepDown()
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs0" --shardsvr --bind_ip localhost --port 7001 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/7001/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/7001/log/mongo.log &
+
+### Deploy Config Server Replica Set and mongos
+
+create folder 7001/configdb/db
+create folder 7002/configdb/db
+create folder 7003/configdb/db
+
+1. Deploy the config servers as a three-member replica set
+
+```
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --configsvr --replSet configReplSet --bind_ip localhost --port 6001 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/6001/data/configdb --logpath ~/Work/Develop/mongodb-linux-4.0.5/6001/log/mongoconfig.log &
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --configsvr --replSet configReplSet --bind_ip localhost --port 6002 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/6002/data/configdb --logpath ~/Work/Develop/mongodb-linux-4.0.5/6002/log/mongoconfig.log &
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --configsvr --replSet configReplSet --bind_ip localhost --port 6003 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/6003/data/configdb --logpath ~/Work/Develop/mongodb-linux-4.0.5/6003/log/mongoconfig.log &
+```
+
+Connect a mongo shell to one of the config servers and run rs.initiate() to initiate the replica set.
+
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongo --port 6001
+
+rs.initiate( {
+   _id : "configReplSet",
+   configsvr: true,
+   members: [
+      { _id: 1, host: "localhost:6001" },
+      { _id: 2, host: "localhost:6002" },
+      { _id: 3, host: "localhost:6003" }
+   ]
+})
+
+2.  Start a mongos instance
+
+start the mongos specifying the config server replica set name followed by a slash / and at least one of the config server hostnames and ports
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongos --configdb configReplSet/localhost:6001,localhost:6002,localhost:6003  --bind_ip localhost --port 6000 --logpath ~/Work/Develop/mongodb-linux-4.0.5/log/mongos.log &
+
+### Add Initial Replica Set as a Shard
+
+The following procedure adds the initial replica set rs0 as a shard.
+
+1. Connect a mongo shell to the mongos
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongo localhost:6000/admin
+
+2. Add the shard
+
+Add a shard to the cluster with the sh.addShard method:
+
+sh.addShard( "rs0/localhost:7001,localhost:7002,localhost:7003" )
+
+### Add Second Shard
+
+1. Start each member of the replica set with the appropriate options.
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs1" --bind_ip localhost --port 8001 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/8001/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/8001/log/mongo.log &
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs1" --bind_ip localhost --port 8002 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/8002/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/8002/log/mongo.log &
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongod --replSet "rs1" --bind_ip localhost --port 8003 --dbpath ~/Work/Develop/mongodb-linux-4.0.5/8003/data/db --logpath ~/Work/Develop/mongodb-linux-4.0.5/8003/log/mongo.log &
+
+2. Connect a mongo shell to one of the mongod instances
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongo --port 8001
+
+3. Initiate the replica set.
+
+rs.initiate( {
+   _id : "rs1",
+   members: [
+      { _id: 1, host: "localhost:8001" },
+      { _id: 2, host: "localhost:8002" },
+      { _id: 3, host: "localhost:8003" }
+   ]
+})
+
+3. Connect a mongo shell to the mongos
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongo localhost:6000/admin
+
+4. Add the shard
+
+Add a shard to the cluster with the sh.addShard method:
+
+sh.addShard( "rs1/localhost:8001,localhost:8002,localhost:8003" )
+
+### Shard a Collection
+
+1. Connect a mongo shell to the mongos
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongo localhost:6000/admin
+
+2. Enable sharding for a database.
+
+Before you can shard a collection, you must first enable sharding for the collection’s database. Enabling sharding for a database does not redistribute data but makes it possible to shard the collections in that database
+
+sh.enableSharding( "test" )
+
+3. Create an index on the shard key
+
+Before sharding a non-empty collection, create an index on the shard key
+
+use test
+db.test_collection.createIndex( { number : 1 } )
+
+4. Shard the collection
+
+In the test database, shard the test_collection, specifying number as the shard key. Run in **mongos**
+
+use test
+sh.shardCollection( "test.test_collection", { "number" : 1 } )
+
+The balancer redistributes chunks of documents when it next runs. As clients insert additional documents into this collection, the mongos routes the documents to the appropriate shard.
+
+5. Confirm the shard is balancing.
+
+Run in **mongos**
+
+use test
+db.stats()
+db.printShardingStatus()
