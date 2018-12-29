@@ -34,13 +34,11 @@ db.createCollection("contacts",
 多了一个validationLevel参数，我们可以在设置validation的时候指定我们的validationLevel级别：
 
 - 默认级别是strict，对该collection已有的和以后新增的document都进行validation验证；
-
 - 可以设置为moderate，仅对已经存在的document进行validation限定；
 
 同时还有validationAction参数来指定当有不符合validation规则的数据进行update或者insert的时候， 我们mongodb实例如何进行处理。
 
 - 默认级别为error，mongodb将拒绝这些不符合validation规则的insert和update。
-
 - 可以设置为warn，mongodb会在日志中记录，但是允许这类insert和update操作。
 
 ## MongoDB ACID事务支持
@@ -106,64 +104,95 @@ MongoDB同样是使用数据进来先写日志（日志刷盘的速度是非常�
 
 ## MongoDB 集群
 
-mongodb的集群搭建方式主要有三种，主从模式，Replica set模式，sharding模式, 三种模式各有优劣，适用于不同的场合，属Replica set应用最为广泛，主从模式现在用的较少，sharding模式最为完备，但配置维护较为复杂。本文我们来看下Replica Set模式的搭建方法。
+mongodb的集群搭建方式主要有三种，主从模式，Replica set模式，sharding模式, 三种模式各有优劣，适用于不同的场合，属Replica set应用最为广泛，主从模式现在用的较少，sharding模式最为完备，但配置维护较为复杂
 
-Mongodb的Replica Set即副本集方式主要有两个目的，一个是数据冗余做故障恢复使用，当发生硬件故障或者其它原因造成的宕机时，可以使用副本进行恢复。另一个是做读写分离，读的请求分流到副本上，减轻主（Primary）的读压力
+### 高可用（多副本Replication)
 
-构建一个 mongoDB Sharding Cluster 需要三种角色:shard 服务器(ShardServer)、配置服务器(config Server)、路由进程(Route Process)
+Mongodb的Replica Set即副本集方式主要有两个目的，一个是数据冗余做故障恢复使用，当发生硬件故障或者其它原因造成的宕机时，可以使用副本进行恢复。另一个是做读写分离，读的请求分流到副本上，减轻主（Primary）的读压力。
 
-### MongoDB的选举机制
+Mongo 副本集是多个mongod实例，一般为3个，一个primary二个Secondary.Primary 把所有的数据修改存入**operation log(oplog)**, Secondaries**异步复制** Primary的oplog把数据修改入自己的数据集。如果Primary不可用，Secondary会开始一个选举，选出一个新的Primary.
 
-MongoDB复制集的目的是提供高可用性，如果一个写操作被复制到大多数节点，只要任意大多数节点可用，那么数据就是可靠的。复制集一般包含一个Primary和若干个Secondary节点。选举机制主要负责在集群初始化及节点发生变化时重新选举主节点，保证系统可用性。
+![Alt text](./pic/mongo1.svg)
+
+- 一个 primary实例.
+- 两个secondary 实例. 两个 secondaries 都可以通过选举成为 primary.
+
+![Alt text](./pic/mongo3.svg)
+
+还有另外一种创建副本集的方式，如果Primary和Secondary的个数是偶数个，可以加一个Arbiter做为仲裁节点，它不保存数据。加入Arbiter的目的是为了维护quorun机制来相应其他实例的heartbeat和election请求。Arbiter不保存数据，所以是非常轻量，可以不用独立的服务器。
+
+![Alt text](./pic/mongo2.svg)
+
+- 一个 primary实例.
+- 一个secondary 实例. secondary 都可以通过选举成为 primary.
+- 一个 arbiter. arbiter在选举中只能投票，不能成为实例节点.
+
+![Alt text](./pic/mongo4.svg)
+
+#### 选举机制
 
 MongoDB节点之间维护心跳检查，主节点选举由心跳触发。MongoDB复制集成员会向自己之外的所有成员发送心跳并处理响应信息，因此每个节点都维护着从该节点POV看到的其他所有节点的状态信息。节点根据自己的集群状态信息判断是否需要发起选举。
 
-## Sharding分片
+Quorom 机制，是一种分布式系统中常用的，用来保证数据冗余和最终一致性的投票算法。每个实例和其他实例同步Heartbeat和vote。
+
+一种非常常用的选举 leader 的方式是“Majority Vote”（“少数服从多数”），但 Kafka 并未采用这种方式。这种模式下，如果我们有 2f+1 个 Replica（包含 Leader 和 Follower），那在 commit 之前必须保证有 f+1 个 Replica 复制完消息，为了保证正确选出新的 Leader，fail 的 Replica 不能超过 f 个。因为在剩下的任意 f+1 个 Replica 里，至少有一个 Replica 包含有最新的所有消息。这种方式有个很大的优势，系统的 latency 只取决于最快的几个 Broker，而非最慢那个。Majority Vote 也有一些劣势，为了保证 Leader Election 的正常进行，它所能容忍的 fail 的 follower 个数比较少。如果要容忍 1 个 follower 挂掉，必须要有 3 个以上的 Replica，如果要容忍 2 个 Follower 挂掉，必须要有 5 个以上的 Replica。也就是说，在生产环境下为了保证较高的容错程度，必须要有大量的 Replica，而大量的 Replica 又会在大数据量下导致性能的急剧下降
+
+#### Server选择算法
+
+MongoDB drivers使用Server选择算法来决定哪个副本集中的成员来读写，Mongo可以控制读写分离，虽然默认是从Primary读写。
+Server的选择在每次读写操作时发生，在配置里由read preference 和 localThresholdMS 决定。Multi-document 事物包含读操作必须使用read preference 为 primary.
+
+### 水平扩展(分片Sharding)
 
 当MongoDB复制集遇到下面的业务场景时，就需要考虑使用分片
 -存储容量需求超出单机磁盘容量；
 -活跃的数据集超出单机内存容量，导致很多请求都要从磁盘读取数据，影响性能；
 -写IOPS超出单个MongoDB节点的写服务能力。
 
-shard 服务器即存储实际数据的分片,每个 shard 可以是一个 mongod 实例, 也可以是一组 mongod 实例构成的 Replica Sets.为了实现每个 Shard 内部的故障 自动转换,MongoDB 官方建议每个 shard 为一组 Replica Sets.
+- shard: 可以是一个副本集或单独的mongod进程，保存分片后的集合数据.
+- mongos: 如果每个分片都包含部分集群数据，那么还需要一个接口连接整个集群。这就是mongos。mongos进程是一个路由器，将所有的读写请求指引到合适的分片上。如此一来，mongos为客户端提供了一个合理的系统视图.mongos是轻量级且非持久化的，第一次启动或者关掉重启就会从 config server 加载配置信息，以后如果配置服务器信息变化会通知到所有的 mongos 更新自己的状态，这样 mongos 就能继续准确路由。
+- config servers: 持久化了分片集群的元数据，改数据包括：每个数据库，集合和特定范围数据的位置；一份变更记录，保存了数据在分片之间进行迁移的历史信息.配置服务器中保存的元数据是某些特定功能和集群维护是的重中之重。举例来说，每次有mongos进程启动，它都会从配置服务器中获取一份元数据的副本。没有这些数据，就无法获得一致的分片集群视图。在生产环境通常有多个 config server 配置服务器来提高可用性。
 
-### 配置服务器
+![Alt text](./pic/mongo5.svg)
 
-如果mongs进程是非持久化的，那么必须有地方能持久保存集群的公认状态；这就是配置服务器的工作，其中持久化了分片集群的元数据，改数据包括：每个数据库，集合和特定范围数据的位置；一份变更记录，保存了数据在分片之间进行迁移的历史信息。配置服务器中保存的元数据是某些特定功能和集群维护是的重中之重。举例来说，每次有mongos进程启动，它都会从配置服务器中获取一份元数据的副本。没有这些数据，就无法获得一致的分片集群视图。该数据的重要性对配置服务器的设计和部署也有影响
+MongoDB 分片在collection级别, collection中的数据分布在多个shard上.
 
-存储所有数据库元信息（路由、分片）的配置。mongos本身没有物理存储分片服务器和数据路由信息，只是缓存在内存里，配置服务器则实际存储这些数据。mongos第一次启动或者关掉重启就会从 config server 加载配置信息，以后如果配置服务器信息变化会通知到所有的 mongos 更新自己的状态，这样 mongos 就能继续准确路由。在生产环境通常有多个 config server 配置服务器，因为它存储了分片路由的元数据，这个可不能丢失！就算挂掉其中一台，只要还有存货， mongodb集群就不会挂掉
+块(chunk): MongoDB将数据拆分为chunk，每个chunk都是collection中的一段连续的数据记录，为防止一个chunk变的越来越大，当一个chunk增加到特定大小时，会被自动拆分为两个较小的chunk。
 
-### mongos路由器
+#### Sharding 策略
 
-如果每个分片都包含部分集群数据，那么还需要一个接口连接整个集群。这就是mongos。mongos进程是一个路由器，将所有的读写请求指引到合适的分片上。如此一来，mongos为客户端提供了一个合理的系统视图。
+Hashed Sharding: 哈希分片根据shard key计算hash值。每个chunk安排了一个hash过的shard key值范围
 
-     mongos进程是轻量级且非持久化的。它们通常运行与与应用服务器相同的机器上，确保对任意分片的请求只经过一次网络跳转。换言之，应用程序连接本地的mongos，而mongos管理了指向单独分片的连接。
+![Alt text](./pic/mongo7.svg)
 
-### 分片服务器
+Ranged Sharding: 范围分片是根据shard key的值的范围把数据分布不同的shard上。
 
-可以是一个副本集或单独的mongod进程，保存分片后的集合数据
+![Alt text](./pic/mongo8.svg)
 
-### 块(chunk)
+#### 读写路由
 
-MongoDB将数据拆分为chunk，每个chunk都是collection中的一段连续的数据记录，为防止一个chunk变的越来越大，当一个chunk增加到特定大小时，会被自动拆分为两个较小的chunk。
+请求如果包含了shard key或着包含shard key为前缀，mongos能够把查询定位到特定的shard集。这种定位的查询方式比广播到所有的shard性能高了很多。
+如果查询不包含shard key，mongos会执行一个广播操作，查询所有的shards。这种分散和聚合的查询消耗更多的时间
 
-### replica set
+![Alt text](./pic/mongo6.svg)
 
-高可用性的分片架构还需要对于每一个分片构建 replica set 副本集保证分片的可靠性。生产环境通常是 2个副本 + 1个仲裁。 Replication通过Oplog实现语句复现。 Primary负责处理所有的write请求，并记录到oplog(operation log)中。Secondary负责复制oplog并应用这些write请求到他们自己的数据集中
+#### Chunk自动均衡(拆分与迁移)
 
-## 拆分与迁移
+MongoDB将数据拆分为chunk，每个chunk都是collection中的一段连续的数据记录，为防止一个chunk变的越来越大，当一个chunk增加到特定大小时，会被自动拆分为两个较小的chunk。所有自动均衡和移动都是基于Chunk
+
+为了使得数据相对平均的分布到所有的shard上，Mongodb有一个balancer运行在后台来自动调整chunks在多个shard中的分布。
 
      分片机制的重点是块的拆分（spliting）与迁移（migration）
 
       首先，考虑一下块拆分的思想。在初始化分片集群时，只存在一个块，这个块的范围涵盖了整个分片集合。那该如何发展到有多个块的分片集群呢？答案就是块大小达到某个阈值是就会对块进行拆分。默认的块的最大块尺寸时64MB或者100000个文档，先达到哪个标准就以哪个标准为准。在向新的分片集群添加数据时，原始的块最终会达到某个阈值，触发块的拆分。这是一个简单的操作，基本就是把原来的范围一分为二，这样就有两个块，每个块都有相同数量的文档。
 
-     请注意，块的拆分是个逻辑操作。当MongoDB进行块拆分时，它只是修改块的元数据就能让一个块变为两个。因此，拆分一个块并不影响分片集合里文档的物理顺序。也就是说拆分既简单又快捷。
+     块的拆分是个逻辑操作。当MongoDB进行块拆分时，它只是修改块的元数据就能让一个块变为两个。因此，拆分一个块并不影响分片集合里文档的物理顺序。也就是说拆分既简单又快捷。
 
-     你可以回想一下，设计分片系统时最大的一个困难就是保证数据始终均匀分布。MongoDB的分片集群是通过在分片中移动块来实现均衡的。我们称之为迁移，这是一个真实的物理操作。
+     设计分片系统时最大的一个困难就是保证数据始终均匀分布。MongoDB的分片集群是通过在分片中移动块来实现均衡的。我们称之为迁移，这是一个真实的物理操作。
 
     迁移是由名为均衡器（balancer）的软件进程管理的，它的任务就是确保数据在各个分片中保持均匀变化。通过追踪各分片上块的数量，就能实现这个功能。虽然均衡的触发会随总数据量的不同而变化，但是通常来说，当集群中拥有块最多的分片与拥有块最少的分片的块数相差大于8时，均衡器就会发起一次均衡处理。在均衡过程中，块会从块较多的分片迁移到块较少非分片上，直到两个分片的块数大致相等为止。
 
-## 读写分离
+#### 读写分离
 
 官网中建议不使用向从节点取数据。原因：
 
