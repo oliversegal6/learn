@@ -352,7 +352,7 @@ Before sharding a non-empty collection, create an index on the shard key
 
 use test
 db.test_collection.createIndex( { number : 1 } )
-
+db.test.insert( { test : "mvc" } )
 4. Shard the collection
 
 In the test database, shard the test_collection, specifying number as the shard key. Run in **mongos**

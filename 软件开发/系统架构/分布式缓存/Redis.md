@@ -194,6 +194,43 @@ sentinel down-after-milliseconds mymaster 6000
 sentinel failover-timeout mymaster 18000
 ```
 
+### Cluster
 
+redis.conf
+```
+port 7000
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
+```
 
+~/Work/Develop/redis-5.0.3/src/redis-server ~/Work/Develop/redis-5.0.3/cluster/17001/redis.conf &
+~/Work/Develop/redis-5.0.3/src/redis-server ~/Work/Develop/redis-5.0.3/cluster/17002/redis.conf &
+~/Work/Develop/redis-5.0.3/src/redis-server ~/Work/Develop/redis-5.0.3/cluster/17003/redis.conf &
+~/Work/Develop/redis-5.0.3/src/redis-server ~/Work/Develop/redis-5.0.3/cluster/17004/redis.conf &
+~/Work/Develop/redis-5.0.3/src/redis-server ~/Work/Develop/redis-5.0.3/cluster/17005/redis.conf &
+~/Work/Develop/redis-5.0.3/src/redis-server ~/Work/Develop/redis-5.0.3/cluster/17006/redis.conf &
 
+#### 搭建集群
+
+通过向实例发送特殊命令来完成创建新集群
+
+~/Work/Develop/redis-5.0.3/src/redis-cli --cluster create 127.0.0.1:17006 127.0.0.1:17001 127.0.0.1:17002 127.0.0.1:17003 127.0.0.1:17004 127.0.0.1:17005 --cluster-replicas 1
+
+这个命令在这里用于创建一个新的集群, 选项–replicas 1 表示我们希望为集群中的每个主节点创建一个从节点
+
+#### 测试集群
+
+写入数据
+```shell
+~/Work/Develop/redis-5.0.3/src/redis-cli -c -p 17001
+127.0.0.1:17001> set foo bar
+-> Redirected to slot [12182] located at 127.0.0.1:17002
+OK
+127.0.0.1:17002> set hello world
+-> Redirected to slot [866] located at 127.0.0.1:17006
+OK
+```
+
+~/Work/Develop/redis-5.0.3/src/redis-cli -p 17001 cluster nodes 

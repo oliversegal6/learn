@@ -231,11 +231,78 @@ consumer不采用批量化，每消费一次就更新offset
 
 
 ## Setup Kafka
+
 [Quick Start](https://kafka.apache.org/quickstart "Quick Start")
 
+### Linux
+
+
+1. Start the server
+
+~/Work/Develop/kafka_2.11-1.0.0/bin/zookeeper-server-start.sh ~/Work/Develop/kafka_2.11-1.0.0/config/zookeeper.properties &
+
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-server-start.sh ~/Work/Develop/kafka_2.11-1.0.0/config/server1.properties &
+
+2. Create a topic
+
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+3.  Send/Consume some messages
+
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+
+4. Setting up a multi-broker cluster
+
+```
+config/server-1.properties:
+    broker.id=1
+    listeners=PLAINTEXT://:9092
+    log.dirs=~/Work/Develop/kafka_2.11-1.0.0/logs/kafka-logs-1
+ 
+config/server-2.properties:
+    broker.id=2
+    listeners=PLAINTEXT://:9094
+    log.dirs=~/Work/Develop/kafka_2.11-1.0.0/logs/kafka-logs-2
+
+config/server-3.properties:
+    broker.id=3
+    listeners=PLAINTEXT://:9094
+    log.dirs=~/Work/Develop/kafka_2.11-1.0.0/logs/kafka-logs-3
+```
+
+Restart 3 nodes
+
+```shell
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-server-start.sh ~/Work/Develop/kafka_2.11-1.0.0/config/server1.properties &
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-server-start.sh ~/Work/Develop/kafka_2.11-1.0.0/config/server2.properties &
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-server-start.sh ~/Work/Develop/kafka_2.11-1.0.0/config/server3.properties &
+```
+
+create a new topic with a replication factor of three:
+
+```shell
+> ~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 3 --partitions 3 --topic my-replicated-topic
+```
+
+describe topics" command:
+
+```shell
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic my-replicated-topic
+```
+
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic my-replicated-topic
+~/Work/Develop/kafka_2.11-1.0.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --from-beginning --topic my-replicated-topic
+
+ps aux | grep server-1.properties
+
 ### Windows
-cd F:\Develop\kafka_2.11-1.0.0\
+
 #### 1. Start the server
+
 **start zookeeper**
 bin\windows\zookeeper-server-start.bat config\zookeeper.properties
 **start kafka**
