@@ -1,4 +1,62 @@
+### 安装最新版node和npm
+
+npm 命令是报错：
+Error: CERT_UNTRUSTED
+
+**解决办法**
+只需要关掉HTTPS就好了！只需要执行如下命令：
+
+npm config set strict-ssl false
+或者
+npm config set registry=”http://registry.npmjs.org/”
+
+
+1.安装python-software-properties
+
+sudo apt-get install python-software-properties
+
+2.添加ppa
+
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+
+3.安装nodejs和npm
+
+sudo apt-get install nodejs
+
+4.查看版本
+
+$ node -v
+v8.11.1
+$ npm -v
+5.6.0
+
+5.配置npm仓库
+
+sudo npm install -g nrm
+
+$ nrm ls
+
+* npm ---- https://registry.npmjs.org/
+  cnpm --- http://r.cnpmjs.org/
+  taobao - https://registry.npm.taobao.org/
+  nj ----- https://registry.nodejitsu.com/
+  rednpm - http://registry.mirror.cqupt.edu.cn/
+  npmMirror  https://skimdb.npmjs.com/registry/
+  edunpm - http://registry.enpmjs.org/
+
+$ nrm use taobao
+Registry has been set to: https://registry.npm.taobao.org/
+
+5、查看版本
+
+```shell
+sudo node -v
+sudo npm -v
+```
+
 #### 步骤1. 设置开发环境
+
+
 `npm install -g @angular/cli@6.0.0`
 重新卸载安装
 

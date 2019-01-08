@@ -24,6 +24,9 @@ docker pull mongo:3.6
 
 运行容器
 docker run -p 27017:27017 -v /home/oliver/Work/Develop/mongodb/db:/data/db -d mongo:3.6
+
+aliyun:
+
 docker run -d -p 27017:27017 -v /home/oliver/tools/mongodb/db:/data/db -d mongo:3.6
 
 命令说明：
@@ -31,6 +34,13 @@ docker run -d -p 27017:27017 -v /home/oliver/tools/mongodb/db:/data/db -d mongo:
 -p 27017:27017 :将容器的27017 端口映射到主机的27017 端口
 -v $PWD/db:/data/db :将主机中当前目录下的db挂载到容器的/data/db，作为mongo数据存储目录
 
+docker run -t -i mongo:3.6 mongo
+
+使用mongo镜像执行mongo 命令连接到刚启动的容器,主机IP为172.17.0.1
+
+docker run -it mongo:3.6 mongo --host 172.17.0.1
+
+mongorestore -h 127.0.0.1 -d stockminingnew  /home/oliver/mongo/dbdump
 
 ## docker下安装python
 
@@ -67,3 +77,11 @@ docker ps -a
 5. 用以下命令，根据某个”容器ID”来创建一个新的”镜像”：
 docker commit -m="Add pandas/lxml/bs4/matplotlib/tushare/threadpool/Django/flask" -a="oliver" 7d95d4cc8018 oliver/python:3.6a
 
+## 启动Springboot
+
+/home/oliver/tools/jdk1.8.0_191/bin/java -jar /home/oliver/SampleService-1.0-SNAPSHOT.jar >/home/oliver/service.log &
+
+
+## 启动页面
+
+ng serve --prod --aot --host 0.0.0.0 &

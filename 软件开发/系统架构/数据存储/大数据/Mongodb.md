@@ -398,3 +398,11 @@ Run in **mongos**
 use test
 db.stats()
 db.printShardingStatus()
+
+### 常用命令
+
+~/Work/Develop/mongodb-linux-4.0.5/bin/mongodump --host 127.0.0.1 --port 27017 --db stockminingnew --out ~/Work/Develop/mongodb/dbdump
+
+mongodump -h 127.0.0.1:27017 --db stockminingnew --out ~/Work/Develop/mongodb/dbdump
+
+mongorestore -h 127.0.0.1:27017 -d stockminingnew /home/oliver/mongo/dbdump

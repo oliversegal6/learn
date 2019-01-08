@@ -258,6 +258,11 @@ iwakoshi/eclipse：镜像的名字，docker pull下来的
 --device：可选参数，设备和主机共享
 ```
 
+### 关闭容器
+
+docker stop containerId
+
+
 # 使用 Docker 搭建开发环境
 
 ## Docker 安装 Python
@@ -296,6 +301,7 @@ docker ps
 
 docker stop
 docker kill 
+
 3. 使用mongo镜像执行mongo 命令连接到刚启动的容器,主机IP为172.17.0.1
 
 docker run -it mongo:3.6 mongo --host 172.17.0.1
