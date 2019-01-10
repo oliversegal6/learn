@@ -71,6 +71,7 @@ npm install typescript@2.6.2
 如果npm 比较满可以使用 cnpm
 npm install cnpm -g --registry=https://registry.npm.taobao.org
 
+
 或加registry
 npm i --save-dev @angular-devkit/build-angular --registry=https://registry.npm.taobao.org
 

@@ -9,7 +9,14 @@ https://ionicframework.com/docs/intro/installation/
 ### Create first Ionic app
 
 ```shell
-ionic start intellLock blank
+ionic start intellLock tutorial --type=angular
 ```
 
 To run app, cd into the directory that was created and then run the `ionic serve` command 
+
+### 创建Android应用
+
+$ cd intellLock
+$ ionic cordova platform add android
+$ ionic cordova build android
+$ ionic cordova emulate android
