@@ -120,3 +120,33 @@ ng serve --open
 ng build --prod 
 http-server -c-1 ./dist/toBeBetter
 ```
+
+#### 使用nginx
+
+增加虚拟服务器
+vi /etc/nginx/nginx.conf
+server {
+        listen       5200;
+        server_name  localhost;
+        location / {
+            root   /home/oliver/stockmining; // 这是angular生成的dist文件夹存放的位置
+            index  index.html;
+    try_files $uri $uri/ /index.html; // 注意此句，一定要加上。否则配置的子路由等无法使用
+        }
+ 
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+
+修改默认nginx端口号： vi /etc/nginx/sites-enabled/default
+
+
+start nginx : 启动nginx
+nginx -s reload  ：修改配置后重新加载生效
+nginx -s reopen  ：重新打开日志文件
+nginx -t -c /path/to/nginx.conf 测试nginx配置文件是否正确，也可以直接使用 nginx -t
+ 
+关闭nginx：
+nginx -s stop  :快速停止nginx
