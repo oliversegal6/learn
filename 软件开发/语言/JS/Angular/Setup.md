@@ -112,6 +112,10 @@ Ant Design Angular
 `ng add ng-zorro-antd`
 
 
+#### 添加日期框架date-fns
+
+npm install date-fns --save
+
 ####  启动开发服务器
 进入项目目录，并启动服务器。
 ```

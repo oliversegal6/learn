@@ -405,4 +405,5 @@ db.printShardingStatus()
 
 mongodump -h 127.0.0.1:27017 --db stockminingnew --out ~/Work/Develop/mongodb/dbdump
 
+mongodump -h 127.0.0.1:27017 --db stockminingnew --out ~/Work/Develop/mongodb/dbdump
 mongorestore -h 127.0.0.1:27017 -d stockminingnew /home/oliver/mongo/dbdump
