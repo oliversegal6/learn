@@ -86,4 +86,24 @@ docker commit -m="Add pandas/lxml/bs4/matplotlib/tushare/threadpool/Django/flask
 
 ng serve --prod --aot --host 0.0.0.0 &
 
-ebt-yoy
+## Cron Job
+
+开机就启动cron进程的设置命令：chkconfig --add crond
+
+把cron加入到启动脚本中：
+rc-update add vixie-cron default
+crontab -l  #查看你的任务
+crontab -e #编辑你的任务
+crontab -r #删除用户的crontab的内容
+
+秒 0-59 , - * / 
+分 0-59 , - * / 
+小时 0-23 , - * / 
+日期 1-31 , - * ? / L W C 
+月份 1-12 或者 JAN-DEC , - * / 
+星期 1-7 或者 SUN-SAT , - * ? / L C # 
+年（可选） 留空, 1970-2099 , - * /
+
+"0 15 10 ? * *" 每天上午10:15触发
+
+59 21 * * * python /home/oliver/stockQuant/tuShareService.py >/dev/null 2>&1> /tmp/cronjob.txt
