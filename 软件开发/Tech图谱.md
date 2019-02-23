@@ -185,6 +185,10 @@ nfs, fastdfs, tfs, Hadoop 了解他们的优缺点，适用场景 。
 
 #### Tomcat, Jetty
 
+### 源代码阅读
+
+zookeeper、spring cloud、redis、kafka、elasticsearch
+
 业务要求，性能要求，具备可扩展性（scalability），可拓展性（extendability），前后兼容性等
 
 1. 博客/论坛：博客和论坛有很多，并且各个网站也都很常用，了解下其原理，最好自己写个练习下。
