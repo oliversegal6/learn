@@ -112,9 +112,9 @@ Producer 发送消息到 broker 时，会根据 Paritition 机制选择将其存
 
  有这么几种可能的 delivery guarantee：
 
-- At most once 消息可能会丢，但绝不会重复传输
-- At least one 消息绝不会丢，但可能会重复传输
-- Exactly once 每条消息肯定会被传输一次且仅传输一次，很多时候这是用户所想要的。
+- At least one 消息可能会丢，但绝不会重复传输。如果producer收到来自Kafka broker的确认（ack）或者acks = all，则表示该消息已经写入到Kafka。但如果producer ack超时或收到错误，则可能会重试发送消息，客户端会认为该消息未写入Kafka。如果broker在发送Ack之前失败，但在消息成功写入Kafka之后，此重试将导致该消息被写入两次，因此消息会被不止一次地传递给最终consumer，这种策略可能导致重复的工作和不正确的结果。
+- At most once 消息绝不会丢，但可能会重复传输。如果在ack超时或返回错误时producer不重试，则该消息可能最终不会写入Kafka，因此不会传递给consumer。在大多数情况下，这样做是为了避免重复的可能性，业务上必须接收数据传递可能的丢失。
+- Exactly once 每条消息肯定会被传输一次且仅传输一次，很多时候这是用户所想要的。即使producer重试发送消息，消息也会保证最多一次地传递给最终consumer。该语义是最理想的，但也难以实现，这是因为它需要消息系统本身与生产和消费消息的应用程序进行协作。例如如果在消费消息成功后，将Kafka consumer的偏移量rollback，我们将会再次从该偏移量开始接收消息。这表明消息传递系统和客户端应用程序必须配合调整才能实现excactly-once。
 
 ### ACK 前需要保证有多少个备份
 

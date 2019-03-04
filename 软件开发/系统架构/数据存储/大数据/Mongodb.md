@@ -214,6 +214,14 @@ MongoDB将数据拆分为chunk，每个chunk都是collection中的一段连续�
 
 总结：副本集不是为了提高读性能存在的，在进行oplog的时候，读操作时被阻塞的。提高读取性能应该使用分片和索引，它的存在更多是作为数据冗余，备份。尤其当主库本来就面临着大量的写入压力，对于副本集的节点，也同样会面临写的压力。
 
+基于对write concern、read concern、read reference的理解，我们可以得出以下结论。
+
+默认情况（w：1、readconcern：local）如果read preference为primary，那么是可以读到最新的数据，强一致性；但如果此时primary故障，那么这个时候会返回错误，可用性得不到保证
+默认情况（w：1、readconcern：local）如果read preference为secondary（secondaryPreferred、primaryPreferred），虽然可能读到过时的数据，但能够立刻得到数据，可用性比较好
+writeconern：majority保证写入的数据不会被回滚; readconcern：majority保证读到的一定是不会被回滚的数据
+若（w：1、readconcern；majority）即使是从primary读取，也不能保证一定返回最新的数据，因此是弱一致性
+若（w: majority、readcocern：majority），如果是从primary读取，那么一定能读到最新的数据，且这个数据一定不会被回滚，但此时写可用性就差一些；如果是从secondary读取，不能保证读到最新的数据，弱一致性。
+
 ## 创建Sharding
 
 create folder 7001/data/db
