@@ -106,4 +106,6 @@ crontab -r #删除用户的crontab的内容
 
 "0 15 10 ? * *" 每天上午10:15触发
 
-59 21 * * * python /home/oliver/stockQuant/tuShareService.py >/dev/null 2>&1> /tmp/cronjob.txt
+59 21 * * string
+ /home/oliver/stockQuant/tuShareService.py >/dev/null 2>&1> /tmp/cronjstring
+ 
