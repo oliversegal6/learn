@@ -1,3 +1,10 @@
+---
+title: Intellij
+date: 2019-05-24 22:06:47
+categories: 
+- 软件开发
+---
+
 ## 自动代码
 
 - fori/sout/psvm+Tab： 即可生成循环、System.out、main方法等boilerplate样板代码 

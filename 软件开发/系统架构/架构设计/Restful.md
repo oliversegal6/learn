@@ -1,4 +1,11 @@
-
+---
+title: Restful
+date: 2019-05-24 22:06:47
+categories: 
+- 软件开发
+- 系统架构
+- 架构设计
+---
 
 
 Java Web有很多成熟的框架，主要可以分为两类Web Application和Web Services。用于Web Application的框架包括官方的Servlet/JSP, JSTL/JSF以及第三方Struts/Spring MVC(action-based)。Web Services的项目又可以分为基于XML的（SOAP/WSDL）的和基于JSON的，Java Communitiy为这两种方式都定义了标准，Java EE5引入了JAX-WS(Java API for XML Web Services)-JSR224，Java EE6引入了JAX-RS(Java API for RESTful Web Services)-JSR331。RESTful Service由于轻量，好测试，有弹性等特点，越来越受欢迎。Jersey，RESTEasy都是JAX-RS标准的具体实现。

@@ -1,4 +1,12 @@
  
+---
+title: FinancialWord
+date: 2019-05-24 22:06:47
+categories: 
+- 金融
+- 投资
+---
+
 #### A.M.T.
     Alternative Minimum Tax is a calculation designed to ensure that individuals and corporations pay their 'fair share' of federal income taxes. Interest on private activity municipal securities is subject to A.M.T.
     

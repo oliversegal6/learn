@@ -1,3 +1,11 @@
+---
+title: nginx
+date: 2019-05-24 22:06:47
+categories: 
+- 软件开发
+- 服务器
+---
+
 server {
         listen       6200;
         server_name  localhost;

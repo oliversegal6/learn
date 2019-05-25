@@ -1,3 +1,12 @@
+---
+title: AOP
+date: 2019-05-24 22:06:47
+categories: 
+- 软件开发
+- 系统架构
+- Spring
+---
+
 ## AOP相关设计与实现解析
 功能增强相关的技术：回调，Proxy，Filter，Listener，Interceptor，AOP
 1. 回调

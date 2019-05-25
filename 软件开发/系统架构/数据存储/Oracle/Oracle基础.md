@@ -1,3 +1,13 @@
+---
+title: Oracle基础
+date: 2019-05-24 22:06:47
+categories: 
+- 软件开发
+- 系统架构
+- 数据存储
+- Oracle
+---
+
 ## Oracle的体系结构
 
 Oracle 中两个比较容易混淆的词，实例(instance)和数据库(database)

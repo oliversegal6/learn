@@ -1,3 +1,13 @@
+---
+title: Mongodb
+date: 2019-05-24 22:06:47
+categories: 
+- 软件开发
+- 系统架构
+- 数据存储
+- 大数据
+---
+
 # MongoDB
 
 ## MongoDB文档模型的好处
@@ -112,22 +122,22 @@ Mongodb的Replica Set即副本集方式主要有两个目的，一个是数据�
 
 Mongo 副本集是多个mongod实例，一般为3个，一个primary二个Secondary.Primary 把所有的数据修改存入**operation log(oplog)**, Secondaries**异步复制** Primary的oplog把数据修改入自己的数据集。如果Primary不可用，Secondary会开始一个选举，选出一个新的Primary.
 
-![Alt text](./pic/mongo1.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo1.svg)
 
 - 一个 primary实例.
 - 两个secondary 实例. 两个 secondaries 都可以通过选举成为 primary.
 
-![Alt text](./pic/mongo3.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo3.svg)
 
 还有另外一种创建副本集的方式，如果Primary和Secondary的个数是偶数个，可以加一个Arbiter做为仲裁节点，它不保存数据。加入Arbiter的目的是为了维护quorun机制来相应其他实例的heartbeat和election请求。Arbiter不保存数据，所以是非常轻量，可以不用独立的服务器。
 
-![Alt text](./pic/mongo2.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo2.svg)
 
 - 一个 primary实例.
 - 一个secondary 实例. secondary 都可以通过选举成为 primary.
 - 一个 arbiter. arbiter在选举中只能投票，不能成为实例节点.
 
-![Alt text](./pic/mongo4.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo4.svg)
 
 #### 选举机制
 
@@ -153,7 +163,7 @@ Server的选择在每次读写操作时发生，在配置里由read preference �
 - mongos: 如果每个分片都包含部分集群数据，那么还需要一个接口连接整个集群。这就是mongos。mongos进程是一个路由器，将所有的读写请求指引到合适的分片上。如此一来，mongos为客户端提供了一个合理的系统视图.mongos是轻量级且非持久化的，第一次启动或者关掉重启就会从 config server 加载配置信息，以后如果配置服务器信息变化会通知到所有的 mongos 更新自己的状态，这样 mongos 就能继续准确路由。
 - config servers: 持久化了分片集群的元数据，改数据包括：每个数据库，集合和特定范围数据的位置；一份变更记录，保存了数据在分片之间进行迁移的历史信息.配置服务器中保存的元数据是某些特定功能和集群维护是的重中之重。举例来说，每次有mongos进程启动，它都会从配置服务器中获取一份元数据的副本。没有这些数据，就无法获得一致的分片集群视图。在生产环境通常有多个 config server 配置服务器来提高可用性。
 
-![Alt text](./pic/mongo5.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo5.svg)
 
 MongoDB 分片在collection级别, collection中的数据分布在多个shard上.
 
@@ -163,18 +173,18 @@ MongoDB 分片在collection级别, collection中的数据分布在多个shard上
 
 Hashed Sharding: 哈希分片根据shard key计算hash值。每个chunk安排了一个hash过的shard key值范围
 
-![Alt text](./pic/mongo7.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo7.svg)
 
 Ranged Sharding: 范围分片是根据shard key的值的范围把数据分布不同的shard上。
 
-![Alt text](./pic/mongo8.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo8.svg)
 
 #### 读写路由
 
 请求如果包含了shard key或着包含shard key为前缀，mongos能够把查询定位到特定的shard集。这种定位的查询方式比广播到所有的shard性能高了很多。
 如果查询不包含shard key，mongos会执行一个广播操作，查询所有的shards。这种分散和聚合的查询消耗更多的时间
 
-![Alt text](./pic/mongo6.svg)
+![Alt text](https://oliversegal6.github.io/images/mongo6.svg)
 
 #### Chunk自动均衡(拆分与迁移)
 

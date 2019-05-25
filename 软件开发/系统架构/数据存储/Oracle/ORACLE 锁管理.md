@@ -1,3 +1,13 @@
+---
+title: ORACLE 锁管理
+date: 2019-05-24 22:06:47
+categories: 
+- 软件开发
+- 系统架构
+- 数据存储
+- Oracle
+---
+
 ## ORACLE锁的管理
 
 ORACLE里锁有以下几种模式:
