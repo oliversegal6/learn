@@ -24,7 +24,7 @@ Flink是一种用于有状态并行数据流式处理的分布式系统。一个
 
 ## **为什么选择 Flink**
 
-![Flink架构](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink6.png)
+![Flink架构](.\pic\flink6.png)
 
 Flink 是一个开源的分布式流式处理框架：
 
@@ -86,13 +86,13 @@ IT体系结构包括许多不同的数据存储，例如关系和专用数据库
 
 数据流程序描述了数据如何在业务操作【operations】之间流动。数据流程序通常表示为有向图，其中节点称为运算子/操作符【operator】，表示计算，而边表示数据依赖及数据流向。没有输入端口的运算子/操作符【operator】称为数据源[data source]，没有输出端口的运算子/操作符【operator】称为数据接收器[data sinks]
 
-![Flink架构](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink7.png)
+![Flink架构](.\pic\flink7.png)
 
 
 
 上图是逻辑图，是因为它传达的是计算逻辑的高级视图，为了执行一个数据流程序，需要将其逻辑数据流图转换为物理数据流图，其中包括关于如何执行计算的详细信息。例如，如果我们使用分布式处理引擎，每个运算子/操作符【operator】可能在不同的物理机器上运行多个并行任务。
 
-![Flink架构](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink8.png)
+![Flink架构](.\pic\flink8.png)
 
 在逻辑数据流图中，节点表示运算子/操作符【operator】，而在物理数据流中，节点表示任务【tasks】。“Extract hashtags”和“Count”运算子/操作符【operator】分别有两个并行的运算子/操作符任务【operator task】，每个运算子/操作符任务【operator task】均是对输入数据的子集执行计算。
 
@@ -111,7 +111,7 @@ IT体系结构包括许多不同的数据存储，例如关系和专用数据库
   THE FORWARD AND RANDOM STRATEGIES AS KEY-BASED
   转发策略和随机策略也可以看作是基于键的策略的变体，前者保持上游元组的键，而后者则执行键的随机重新分配。
 
-![Flink架构](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink9.png)
+![Flink架构](.\pic\flink9.png)
 
 ## Flink基本概念
 
@@ -120,14 +120,14 @@ IT体系结构包括许多不同的数据存储，例如关系和专用数据库
 当Flink系统启动时，首先启动JobManager和一至多个TaskManager。JobManager负责协调Flink系统，TaskManager则是执行并行程序的worker。当系统以本地形式启动时，一个JobManager和一个TaskManager会启动在同一个JVM中。
 当一个程序被提交后，系统会创建一个Client来进行预处理，将程序转变成一个并行数据流的形式，交给JobManager和TaskManager执行。
 
-![Flink架构](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink1.webp)
+![Flink架构](.\pic\flink1.webp)
 
 - JobManager是控制单个应用执行的主进程，即，每个应用程序都是由不同的JobManager控制的。JobManager接收一个应用用于执行。该应用由一个所谓的JobGraph、一个逻辑数据流图【 logical dataflow graph】和一个打包了所有必需的类、库和其他资源的JAR文件组成。JobManager将JobGraph转换为物理数据流图【physical dataflow graph】，我们称该物理数据流图为ExecutionGraph，它包含可以并行执行的任务。JobManager要求ResourceManager提供执行任务所需的资源(即TaskManager slots)，一旦它接收到足够的TaskManager插槽，它就将任务分配给这些负责执行任务的TaskManager 。在执行期间，JobManager负责所有需要中枢协调的操作，例如检查点的协调(请参阅后面的部分)。
 - Flink针对不同的环境和资源提供者(如YARN、Mesos、Kubernetes和stand-alone部署)提供了多种ResourceManager的实现。ResourceManager负责管理TaskManager插槽，它是Flink处理资源的单元。当JobManager请求申请TaskManager 插槽时，ResourceManager要求具有空闲插槽的TaskManager将这些插槽提供给JobManager。如果没有足够的插槽来满足JobManager的请求，则ResourceManager可以与资源提供者(如Apache Mesos、YARN和Kubernetes)对话，以便提供可以用于启动TaskManager进程的容器。ResourceManager还负责杀死空闲的任务管理器来释放计算资源。
 - TaskManagers是Flink的工作进程。通常，在Flink setup中运行着多个TaskManagers。TaskManagers提供了一定数量的插槽。插槽的数量限制了TaskManager可以执行的任务的数量。启动TaskManagers之后，TaskManagers会在ResourceManager中注册它的插槽。在ResourceManager的指示下，TaskManager会向JobManager提供一个或多个插槽。然后JobManager可以向插槽分配任务来执行它们。在执行期间，TaskManager可以与运行的是相同应用的任务的其他TaskManager交换数据。任务的执行和插槽的概念将在后面的部分中详细讨论。
 - Dispatcher的运行贯穿各个执行的作业，并提供一个REST接口用于提交应用程序以供执行。一旦它接收到应用程序，它就启动JobManager并将应用程序移交给它。REST接口使Dispatcher能够作为防火墙保护下的集群的入口点。Dispatcher还运行一个web仪表板来提供关于以往作业执行的详细信息。根据如何提交应用程序以供执行，Dispatcher有时并不适用。
 
-![Flink架构](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink10.png)
+![Flink架构](.\pic\flink10.png)
 
 ### 高吞吐量和低延迟
 
@@ -153,7 +153,7 @@ IT体系结构包括许多不同的数据存储，例如关系和专用数据库
 
 分段数据的重排序，依靠的是数据流的watermark值。每当我们每接收到一份数据到buffer中时，我们选定其中最新的watermark值，对buffer里数据的时间小于此watermark值的数据在buffer中做一个排序。然后将此排序好的数据发向下游。这里基于的一个原则是：时间比当前watermark消息早的数据都已经到来了，所以我们可以大胆地把这批数据先拍好序再发出去
 
-![](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink2.png)
+![](.\pic\flink2.png)
 
 
 
@@ -163,7 +163,7 @@ Flink流任务中，会涉及到数据被多次窗口处理的问题，比如数
 
 这里Flink采用了一种窗口逐一对齐的做法。后一窗口的起始末尾边界与前一序处理窗口的边界完全对齐，对应区间范围内的结果数据同样落位到相对应的区间窗口内。如下图所示
 
-![](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink3.png)
+![](.\pic\flink3.png)
 
 ### State Management
 
@@ -173,7 +173,7 @@ Flink流任务中，会涉及到数据被多次窗口处理的问题，比如数
 
 操作符状态【Operator State】的作用域是操作符任务。这意味着由同一并行任务处理的所有记录都可以访问相同的状态。操作符状态不能被相同或不同操作符的其他任务访问
 
-![](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink12.png)
+![](.\pic\flink12.png)
 
 Flink为操作符状态提供了三个原语：
 
@@ -185,7 +185,7 @@ Flink为操作符状态提供了三个原语：
 
 键控状态的作用域限定在操作符输入流的数据记录上定义的键。Flink为每个键值维护一个状态实例，并将具有相同键的所有记录分区到维护该键状态的操作符任务上。当一个任务处理一条记录时，它会自动将状态访问范围限定到当前记录的键。因此，具有相同键的所有记录访问的是相同的状态
 
-![](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink13.png)
+![](.\pic\flink13.png)
 
 您可以将键控状态看作键值对映射，它在一个操作符的所有并行任务之上，按照键进行分区(或切片)。Flink为键控状态提供了不同的原语，这些原语决定了为这个分布映射中的每个键所存储的值的类型。我们将简要讨论最常见的键控状态原语。
 
@@ -207,11 +207,11 @@ Flink为操作符状态提供了三个原语：
 
 Flink为了实现定期的checkpoint，做的一个核心改动是在流数据中增加一个标记数据记录，名为stream barrier。不同时间点插入barrier数据将流数据分隔成了多份，每份对应一次checkpoint操作，同时checkpoint会保留住数据源source当时的偏移量信息。如下图所示：
 
-![](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink4.png)
+![](.\pic\flink4.png)
 
 当barrier标记从source流向到sink下游，并且系统受到sink端的确认消息后，此checkpoint宣告正式完成。如果过程中需要涉及多input的输入时，处理快的barrier流会在过程中等待落后的其它流直到它们的barrier信息到来，然后再往下游传输数据，如下图
 
-![](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink5.png)
+![](.\pic\flink5.png)
 
 对于应用中所涉及的中间状态数据，Flink支持用户自定义状态持久化操作，然后应用程序在重新启动的时候从外部存储中重新恢复状态数据。
 
@@ -233,7 +233,7 @@ YARN集群我们不需要运行多个JobManager（ApplicationMaster）实例，�
 
 Flink的高可用模式基于Apache ZooKeeper，该系统用于需要协调和一致的分布式服务。Flink使用ZooKeeper进行领导者选举【leader election】，并将其作为一个高可用且可持久化的数据存储。在高可用模式下操作时，JobManager将JobGraph和所有必需的元数据(如应用程序的JAR文件)写入到由state backend配置的远程存储系统上。此外，JobManager还会将指向存储位置的指针写到ZooKeeper的数据存储中。在应用程序执行期间，JobManager接收各个任务检查点的状态句柄(存储位置)。在检查点完成后，即，当所有任务都成功地将状态写入远程存储时，JobManager将状态句柄写入远程存储，并将指向该位置的指针写入ZooKeeper。因此，从JobManager故障中恢复所需的所有数据都存储在远程存储中，ZooKeeper保存了指向该存储位置的指针
 
-![](E:\github\learn\软件开发\系统架构\分布式流式计算\pic\flink11.png)
+![](.\pic\flink11.png)
 
 当JobManager发生失败时，归属于其应用程序的所有任务都会自动取消。接管故障主机工作的新JobManager将会执行以下步骤。
 
